@@ -3,9 +3,9 @@ package ma.tr.docnearme.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import ma.tr.docnearme.domain.entity.User;
+import ma.tr.docnearme.dto.ApiResponse;
 import ma.tr.docnearme.dto.auth.*;
-import ma.tr.docnearme.mapper.UserMapper;
+import ma.tr.docnearme.dto.user.UserDtoResponse;
 import ma.tr.docnearme.service.auth.AuthService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -36,7 +36,7 @@ public class AuthController {
     }
 
     @PostMapping("/auth/resend")
-    public ResponseEntity<ApiResponse<String>> resendVerificationCode(@RequestBody RsendVerificationCodeRequest resendVerificationCodeRequest) {
+    public ResponseEntity<ApiResponse<String>> resendVerificationCode(@RequestBody sendVerificationCodeRequest resendVerificationCodeRequest) {
         authService.resendVerificationCode(resendVerificationCodeRequest);
         return ResponseEntity.ok(new ApiResponse<>("Verification code sent", null));
     }

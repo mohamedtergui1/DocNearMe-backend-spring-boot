@@ -5,10 +5,12 @@ import lombok.RequiredArgsConstructor;
 
 import ma.tr.docnearme.domain.entity.User;
 import ma.tr.docnearme.dto.auth.*;
-import ma.tr.docnearme.exception.BadRequest;
+import ma.tr.docnearme.dto.user.UserDtoResponse;
 import ma.tr.docnearme.exception.NotAuthException;
-import ma.tr.docnearme.mapper.UserMapper;
+import ma.tr.docnearme.exception.ProcessNotCompletedException;
+import ma.tr.docnearme.mapper.AuthMapper;
 import ma.tr.docnearme.repository.UserRepository;
+import ma.tr.docnearme.service.email.EmailService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -26,24 +28,27 @@ public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final UserMapper userMapper;
+    private final AuthMapper authMapper;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
 
 
 
     public UserDtoResponse signup(RegisterRequest input) {
-        User user = userMapper.toRegisterRequest(input);
+        User user = authMapper.toEntity(input);
+        if(userRepository.existsByEmail(user.getEmail()) ){
+            throw new ProcessNotCompletedException("Email already in use");
+        }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
         sendVerificationEmail(user);
-        return userRepository.save(user);
+        return authMapper.toDto(userRepository.save(user));
     }
 
     public UserDtoResponse authenticate(LoginRequest input) {
-        User user = userRepository.findByEmail(input.getEmail())
+        User user = userRepository.findByEmail(input.email())
                 .orElseThrow(() -> new NotAuthException("the credential dont match our data"));
 
         if (!user.isEnabled()) {
@@ -51,16 +56,16 @@ public class AuthServiceImpl implements AuthService {
         }
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        input.getEmail(),
-                        input.getPassword()
+                        input.email(),
+                        input.password()
                 )
         );
 
-        return user;
+        return authMapper.toDto(user);
     }
 
     public void verifyUser(VerifyUserDto input) {
-        Optional<User> optionalUser = userRepository.findByEmail(input.getEmail());
+        Optional<User> optionalUser = userRepository.findByEmail(input.email());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.getVerificationCodeExpiresAt() == null ||
@@ -68,25 +73,25 @@ public class AuthServiceImpl implements AuthService {
                 throw new NotAuthException("Verification code has expired");
             }
 
-            if (user.getVerificationCode().equals(input.getVerificationCode())) {
+            if (user.getVerificationCode().equals(input.verificationCode())) {
                 user.setEnabled(true);
                 user.setVerificationCode(null);
                 user.setVerificationCodeExpiresAt(null);
                 userRepository.save(user);
             } else {
-                throw new BadRequest("Invalid verification code");
+                throw new ProcessNotCompletedException("Invalid verification code");
             }
         } else {
             throw new NotAuthException("User not found");
         }
     }
 
-    public void   resendVerificationCode(RsendVerificationCodeRequest rsendVerificationCodeRequest) {
-        Optional<User> optionalUser = userRepository.findByEmail(rsendVerificationCodeRequest.email());
+    public void   resendVerificationCode(sendVerificationCodeRequest sendVerificationCodeRequest) {
+        Optional<User> optionalUser = userRepository.findByEmail(sendVerificationCodeRequest.email());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             if (user.isEnabled()) {
-                throw new BadRequest("Account is already verified");
+                throw new ProcessNotCompletedException("Account is already verified");
             }
             user.setVerificationCode(generateVerificationCode());
             user.setVerificationCodeExpiresAt(LocalDateTime.now().plusHours(1));
@@ -100,7 +105,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public UserDtoResponse authUser() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return userMapper.toDto(user);
+        return authMapper.toDto(user);
     }
 
     private void sendVerificationEmail(User user) {

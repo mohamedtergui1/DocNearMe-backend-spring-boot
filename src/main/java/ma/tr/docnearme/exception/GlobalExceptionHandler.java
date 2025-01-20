@@ -35,10 +35,7 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(DeleteUpdateException.class)
-    public ResponseEntity<ErrorResponse> handleDeleteUpdateException(DeleteUpdateException ex) {
-        return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
-    }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
@@ -58,13 +55,10 @@ public class GlobalExceptionHandler {
         return buildErrorResponse(ex.getMessage(), HttpStatus.UNAUTHORIZED);
     }
 
-    @ExceptionHandler(Errors422Exception.class)
-    public ResponseEntity<ErrorResponse> handleErrors422Exception(Errors422Exception ex) {
-        return buildErrorResponse("Validation failed", HttpStatus.UNPROCESSABLE_ENTITY, ex.getErrors());
-    }
 
-    @ExceptionHandler(BadRequest.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(BadRequest ex) {
+
+    @ExceptionHandler(ProcessNotCompletedException.class)
+    public ResponseEntity<ErrorResponse> handleBadRequest(ProcessNotCompletedException ex) {
         return buildErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 

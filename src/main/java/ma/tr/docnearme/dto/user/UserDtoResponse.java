@@ -1,4 +1,4 @@
-package ma.tr.docnearme.dto.auth;
+package ma.tr.docnearme.dto.user;
 
 public record UserDtoResponse() {
 }

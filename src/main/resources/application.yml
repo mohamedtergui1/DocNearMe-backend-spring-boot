@@ -1,7 +1,9 @@
 spring:
   application:
     name: DocNearMe
-
+  mail:
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
   datasource:
     driver-class-name: org.postgresql.Driver
     url: ${url}
@@ -10,7 +12,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: none
+      ddl-auto: create-drop
       show_sql: true
       format_sql: true
       generate_statistics: true
@@ -19,8 +21,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         jdbc.time_zone: UTC
 
-liquibase:
-  change-log: classpath:db/changelog/db.changelog-master.yaml
+
+
 
 
 
