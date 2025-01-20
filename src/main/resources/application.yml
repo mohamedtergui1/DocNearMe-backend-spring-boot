@@ -1,3 +1,31 @@
 spring:
+  application:
+    name: DocNearMe
+
   datasource:
-    url:
+    driver-class-name: org.postgresql.Driver
+    url: ${url}
+    username: ${username}
+    password: ${password}
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+      show_sql: true
+      format_sql: true
+      generate_statistics: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc.time_zone: UTC
+
+liquibase:
+  change-log: classpath:db/changelog/db.changelog-master.yaml
+
+
+
+
+logging:
+  level:
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
