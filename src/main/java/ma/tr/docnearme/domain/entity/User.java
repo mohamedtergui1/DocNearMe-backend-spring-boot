@@ -10,7 +10,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -40,14 +39,15 @@ public class User implements UserDetails {
 
     private UserRole role;
 
-    @OneToOne(mappedBy = "doctor")
-    private Clinic clinic;
+    private String phoneNumber;
+
+    @OneToMany(mappedBy = "patient")
+    private List<Consultation> consultations;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of();
+        return List.of( ()  -> "Role_" +  role.name());
     }
-
     @Override
     public String getUsername() {
         return email;
@@ -57,4 +57,5 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return enabled;
     }
+
 }

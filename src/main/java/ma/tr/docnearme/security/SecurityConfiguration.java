@@ -28,9 +28,10 @@ import java.util.List;
 public class SecurityConfiguration {
 
     private  final UserRepository userRepository;
+
     @Bean
     UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
+        return email -> userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
     }
 
