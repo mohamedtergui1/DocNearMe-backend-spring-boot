@@ -13,27 +13,26 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Ordonnance {
+public class Prescription {
     @Id
     @GeneratedValue
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "medecin_id")
-    private User medecin;
+    @JoinColumn(name = "doctor_id") // "medecin_id" → "doctor_id"
+    private User doctor; // "medecin" → "doctor"
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private User patient;
 
     @Temporal(TemporalType.DATE)
-    private Date dateEmission;
+    private Date issueDate; // "dateEmission" → "issueDate"
 
-    @OneToMany(mappedBy = "ordonnance")
-    private List<Medicament> medicaments;
+    @OneToMany(mappedBy = "prescription")
+    private List<Medication> medications; // "medicaments" → "medications"
 
     @ManyToOne
-    @JoinColumn(name = "dossierMedical_id")
-    private DossierMedical dossierMedical;
-
+    @JoinColumn(name = "medical_record_id") // "dossierMedical_id" → "medical_record_id"
+    private MedicalRecord medicalRecord;
 }

@@ -2,12 +2,13 @@ package ma.tr.docnearme.security;
 
 import lombok.RequiredArgsConstructor;
 import ma.tr.docnearme.repository.UserRepository;
+import ma.tr.docnearme.service.jwt.JwtService;
+import ma.tr.docnearme.service.jwt.JwtServiceImpl;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -30,6 +31,11 @@ public class SecurityConfiguration {
     private  final UserRepository userRepository;
 
     @Bean
+    JwtService jwtService() {
+        return new JwtServiceImpl();
+    }
+
+    @Bean
     UserDetailsService userDetailsService() {
         return email -> userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
@@ -42,12 +48,12 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
+    public AuthenticationManager authenticationManager() throws Exception {
+        return new AuthenticationManagerImpl(List.of(daoAuthenticationProvider(),jwtAuthenticationProvider()));
     }
 
     @Bean
-    AuthenticationProvider authenticationProvider() {
+    AuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
 
         authProvider.setUserDetailsService(userDetailsService());
@@ -55,10 +61,14 @@ public class SecurityConfiguration {
 
         return authProvider;
     }
+    @Bean
+    AuthenticationProvider jwtAuthenticationProvider() {
+        return  new JwtAuthProvider(jwtService(), userDetailsService());
+    }
 
     @Bean
-    JwtAuthenticationFilter jwtAuthenticationFilter(){
-        return new JwtAuthenticationFilter();
+    JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        return new JwtAuthenticationFilter(authenticationManager());
     }
 
     @Bean
@@ -72,7 +82,7 @@ public class SecurityConfiguration {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-//                .authenticationProvider()
+                .authenticationManager(authenticationManager())
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -25,15 +25,15 @@ public class Consultation {
     private User patient;
 
     @ManyToOne
-    @JoinColumn(name = "dossierMedical_id")
-    private DossierMedical dossierMedical;
+    @JoinColumn(name = "medical_record_id")
+    private MedicalRecord medicalRecord;
 
-    private Date dateConsultation;
+    private Date consultationDate;
 
-    private String motif;
+    private String reason;
 
-    private Boolean confirme;
+    private Boolean confirmed;
 
-    private Boolean termine;
+    private Boolean completed;
 
 }

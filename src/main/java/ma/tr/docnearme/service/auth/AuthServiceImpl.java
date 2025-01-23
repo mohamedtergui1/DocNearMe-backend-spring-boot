@@ -4,6 +4,7 @@ import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
 import ma.tr.docnearme.domain.entity.User;
+import ma.tr.docnearme.domain.enums.UserRole;
 import ma.tr.docnearme.dto.auth.*;
 import ma.tr.docnearme.dto.user.UserDtoResponse;
 import ma.tr.docnearme.exception.NotAuthException;
@@ -11,6 +12,7 @@ import ma.tr.docnearme.exception.ProcessNotCompletedException;
 import ma.tr.docnearme.mapper.AuthMapper;
 import ma.tr.docnearme.repository.UserRepository;
 import ma.tr.docnearme.service.email.EmailService;
+import ma.tr.docnearme.service.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -31,11 +33,15 @@ public class AuthServiceImpl implements AuthService {
     private final AuthMapper authMapper;
     private final AuthenticationManager authenticationManager;
     private final EmailService emailService;
+    private  final JwtService jwtService;
 
 
 
     public UserDtoResponse signup(RegisterRequest input) {
         User user = authMapper.toEntity(input);
+        if(user.getRole() == UserRole.ADMIN){
+            throw new ProcessNotCompletedException("something is wrong");
+        }
         if(userRepository.existsByEmail(user.getEmail()) ){
             throw new ProcessNotCompletedException("Email already in use");
         }
@@ -47,7 +53,7 @@ public class AuthServiceImpl implements AuthService {
         return authMapper.toDto(userRepository.save(user));
     }
 
-    public UserDtoResponse authenticate(LoginRequest input) {
+    public LoginResponse authenticate(LoginRequest input) {
         User user = userRepository.findByEmail(input.email())
                 .orElseThrow(() -> new NotAuthException("the credential dont match our data"));
 
@@ -61,7 +67,7 @@ public class AuthServiceImpl implements AuthService {
                 )
         );
 
-        return authMapper.toDto(user);
+        return  new LoginResponse(jwtService.generateToken(user), jwtService.generateTokenRefresh(user), jwtService.getExpirationTime() , authMapper.toDto(user));
     }
 
     public void verifyUser(VerifyUserDto input) {

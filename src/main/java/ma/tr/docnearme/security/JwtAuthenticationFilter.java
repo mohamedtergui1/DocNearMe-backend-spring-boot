@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,7 +23,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-
+    private final AuthenticationManager authenticationManager;
 
 
     @Override
@@ -39,8 +40,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-
-
+            final String token = authHeader.replace("Bearer ", "");
+            Authentication authentication = authenticationManager.authenticate(new JwtAuthenticationToken(token));
+            SecurityContextHolder.getContext().setAuthentication(authentication);
             filterChain.doFilter(request, response);
         } catch (Exception exception) {
             ErrorResponse errorResponse = new ErrorResponse(
@@ -62,5 +64,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             HttpStatus status,
             LocalDateTime timestamp,
             Map<String, String> errors
-    ) {}
+    ) {
+    }
 }

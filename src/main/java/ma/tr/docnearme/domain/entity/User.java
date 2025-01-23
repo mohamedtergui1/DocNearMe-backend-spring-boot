@@ -21,9 +21,13 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User implements UserDetails {
+
     @Id
     @GeneratedValue
     private UUID id;
+
+    @Column(nullable = false)
+    private String name;
 
     @Column(unique = true, nullable = false)
     private String email;
@@ -48,6 +52,7 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of( ()  -> "Role_" +  role.name());
     }
+
     @Override
     public String getUsername() {
         return email;

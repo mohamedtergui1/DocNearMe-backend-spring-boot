@@ -12,5 +12,10 @@ public record RegisterRequest(@NotBlank(message = "Password is required") @Size(
 
                               @NotBlank @Email String email,
 
-                              @NotNull UserRole role) {
+                              @NotNull UserRole role
+        ,
+                              @NotBlank @Size(min = 8, max = 30)
+                              String phoneNumber
+
+) {
 }

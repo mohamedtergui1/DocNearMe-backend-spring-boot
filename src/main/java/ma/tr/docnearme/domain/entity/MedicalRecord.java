@@ -12,7 +12,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Entity
-public class DossierMedical {
+public class MedicalRecord {
     @Id
     @GeneratedValue
     private UUID id;
@@ -21,12 +21,11 @@ public class DossierMedical {
     @JoinColumn(name = "patient_id")
     private User patient;
 
-    @OneToMany(mappedBy = "dossierMedical")
+    @OneToMany(mappedBy = "medicalRecord")
     private List<Consultation> consultations;
 
-    @OneToMany(mappedBy = "dossierMedical")
-    private List<Ordonnance> ordonnances;
+    @OneToMany(mappedBy = "medicalRecord")
+    private List<Prescription> prescriptions;
 
-    @OneToMany(mappedBy = "dossierMedical")
-    private List<ResultatExamen> resultatsExamens;
+    
 }
