@@ -25,6 +25,10 @@ public class Consultation {
     private User patient;
 
     @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private User doctor;
+
+    @ManyToOne
     @JoinColumn(name = "medical_record_id")
     private MedicalRecord medicalRecord;
 

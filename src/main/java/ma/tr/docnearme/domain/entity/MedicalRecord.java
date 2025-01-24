@@ -13,6 +13,7 @@ import java.util.UUID;
 @Getter
 @Entity
 public class MedicalRecord {
+
     @Id
     @GeneratedValue
     private UUID id;
@@ -27,5 +28,4 @@ public class MedicalRecord {
     @OneToMany(mappedBy = "medicalRecord")
     private List<Prescription> prescriptions;
 
-    
 }

@@ -41,10 +41,16 @@ public class AuthController {
         return ResponseEntity.ok(new ApiResponse<>("Verification code sent", null));
     }
 
+    @PostMapping("/auth/refresh")
+    public ResponseEntity<ApiResponse<String>> refreshToken(@RequestBody sendVerificationCodeRequest resendVerificationCodeRequest) {
+        authService.resendVerificationCode(resendVerificationCodeRequest);
+        return ResponseEntity.ok(new ApiResponse<>("Verification code sent", null));
+    }
+
     @GetMapping("/authUser")
     public ResponseEntity<ApiResponse<UserDtoResponse>> getUser() {
         UserDtoResponse userDtoResponse = authService.authUser();
-        return ResponseEntity.ok(new ApiResponse<>("User fetched successfully", userDtoResponse));
+        return ResponseEntity.ok(new ApiResponse<>(null, userDtoResponse));
     }
 
 }

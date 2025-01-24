@@ -13,11 +13,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 
 public record JwtAuthProvider(JwtService jwtService,
                               UserDetailsService userDetailsService) implements AuthenticationProvider {
-
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         String token = (String) authentication.getCredentials();
-        if(!jwtService.isAccessToken(token)){
+        if (!jwtService.isAccessToken(token)) {
             throw new BadCredentialsException("Bad credentials");
         }
 

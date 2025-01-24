@@ -14,25 +14,27 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 public class Prescription {
+
     @Id
     @GeneratedValue
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id") // "medecin_id" → "doctor_id"
-    private User doctor; // "medecin" → "doctor"
+    @JoinColumn(name = "doctor_id")
+    private User doctor;
 
     @ManyToOne
     @JoinColumn(name = "patient_id")
     private User patient;
 
     @Temporal(TemporalType.DATE)
-    private Date issueDate; // "dateEmission" → "issueDate"
+    private Date issueDate;
 
     @OneToMany(mappedBy = "prescription")
-    private List<Medication> medications; // "medicaments" → "medications"
+    private List<Medication> medications;
 
     @ManyToOne
-    @JoinColumn(name = "medical_record_id") // "dossierMedical_id" → "medical_record_id"
+    @JoinColumn(name = "medical_record_id")
     private MedicalRecord medicalRecord;
+
 }
