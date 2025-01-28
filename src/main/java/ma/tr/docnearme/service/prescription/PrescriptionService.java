@@ -8,7 +8,7 @@ import java.util.UUID;
 public interface PrescriptionService {
     PrescriptionResponse getPrescription(UUID id);
 
-    PrescriptionResponse updatePrescription(PrescriptionRequest prescriptionRequest);
+    PrescriptionResponse updatePrescription(PrescriptionRequest prescriptionRequest, UUID prescriptionId);
 
     PrescriptionResponse createPrescription(PrescriptionRequest prescriptionRequest);
 

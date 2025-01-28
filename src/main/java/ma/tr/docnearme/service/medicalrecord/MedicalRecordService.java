@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface MedicalRecordService {
     MedicalRecordResponse createDossierMedical(MedicalRecordRequest medicalRecordRequest);
 
-    MedicalRecordResponse updateDossierMedical(MedicalRecordRequest medicalRecordRequest);
+    MedicalRecordResponse updateDossierMedical(MedicalRecordRequest medicalRecordRequest , UUID medicalRecordId);
 
     void deleteDossierMedical(UUID dossierMedicalId);
 

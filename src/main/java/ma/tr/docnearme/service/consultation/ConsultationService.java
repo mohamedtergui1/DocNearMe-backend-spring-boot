@@ -11,7 +11,7 @@ public interface ConsultationService {
 
     ConsultationResponse createConsultation(ConsultationRequest consultationRequest);
 
-    ConsultationResponse updateConsultation(ConsultationRequest consultationRequest);
+    ConsultationResponse updateConsultation(ConsultationRequest consultationRequest , UUID consultationId);
 
     void deleteConsultation(UUID consultationId);
 

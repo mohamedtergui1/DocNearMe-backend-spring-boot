@@ -4,7 +4,7 @@ import ma.tr.docnearme.domain.enums.UserRole;
 
 import java.util.UUID;
 
-public record UserDtoResponse(
+public record UserDtoRequest(
         UUID id,
         String name,
         String email,

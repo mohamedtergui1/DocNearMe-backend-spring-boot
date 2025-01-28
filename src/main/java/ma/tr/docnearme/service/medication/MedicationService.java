@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface MedicationService {
     MedicationResponse addMedication(MedicationRequest medicationRequest);
 
-    MedicationResponse updateMedication(MedicationRequest medicationRequest);
+    MedicationResponse updateMedication(MedicationRequest medicationRequest, UUID medicationId);
 
     void deleteMedication(MedicationRequest medicationRequest);
 
