@@ -1,7 +1,7 @@
 package ma.tr.docnearme.security;
 
 
-import ma.tr.docnearme.service.jwt.JwtService;
+import ma.tr.docnearme.security.jwt.JwtService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
