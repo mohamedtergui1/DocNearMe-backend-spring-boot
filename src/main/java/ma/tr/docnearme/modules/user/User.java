@@ -1,10 +1,7 @@
 package ma.tr.docnearme.modules.user;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.medicalrecord.MedicalRecord;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +18,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class User implements UserDetails {
 
     @Id
@@ -65,7 +63,8 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+       // return enabled;
+        return true;
     }
 
 }

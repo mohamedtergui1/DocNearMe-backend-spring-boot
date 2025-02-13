@@ -13,9 +13,7 @@ public interface PrescriptionMapper {
     @Mapping(source = "patient" , target = "patient")
     PrescriptionResponse toResponse(Prescription prescription);
 
-    ClinicResponse map(Clinic clinic);
 
-    @Mapping(source = "patientId" , target = "patient.id")
     @Mapping(source = "clinicId" , target = "clinic.id")
     Prescription toPrescription(PrescriptionRequest prescriptionRequest);
 }

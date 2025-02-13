@@ -3,6 +3,7 @@ package ma.tr.docnearme.modules.prescription;
 import lombok.RequiredArgsConstructor;
 import ma.tr.docnearme.exception.ProcessNotCompletedException;
 import ma.tr.docnearme.modules.clinic.ClinicRepository;
+import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.modules.user.UserRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +24,12 @@ public class PrescriptionServiceImpl implements PrescriptionService {
     }
 
     @Override
-    public PrescriptionResponse updatePrescription(PrescriptionRequest prescriptionRequest, UUID id) {
+    public PrescriptionResponse updatePrescription(PrescriptionRequest prescriptionRequest, UUID id, UUID patientId) {
         Prescription prescription = prescriptionRepository.findById(id).orElseThrow(() -> new ProcessNotCompletedException("no such prescription"));
         if (prescription.getStatus() != PrescriptionStatus.PENDING) {
             throw new ProcessNotCompletedException("you can't update a valid pr rejected prescription");
         }
-        if (!userRepository.existsById(prescriptionRequest.patientId())) {
+        if (!userRepository.existsById(patientId)) {
             throw new ProcessNotCompletedException("patient does not exist");
         }
         if (!clinicRepository.existsById(prescriptionRequest.clinicId())) {
@@ -36,18 +37,23 @@ public class PrescriptionServiceImpl implements PrescriptionService {
         }
         Prescription newPrescription = prescriptionMapper.toPrescription(prescriptionRequest);
         newPrescription.setId(id);
+        User patient = User.builder().id(patientId).build();
+        newPrescription.setPatient(patient);
         return prescriptionMapper.toResponse(prescriptionRepository.save(newPrescription));
     }
 
     @Override
-    public PrescriptionResponse createPrescription(PrescriptionRequest prescriptionRequest) {
-        if (!userRepository.existsById(prescriptionRequest.patientId())) {
+    public PrescriptionResponse createPrescription(PrescriptionRequest prescriptionRequest, UUID patientId) {
+        if (!userRepository.existsById(patientId)) {
             throw new ProcessNotCompletedException("patient does not exist");
         }
         if (!clinicRepository.existsById(prescriptionRequest.clinicId())) {
             throw new ProcessNotCompletedException("clinic does not exist");
         }
         Prescription prescription = prescriptionMapper.toPrescription(prescriptionRequest);
+        User patient = User.builder().id(patientId).build();
+        prescription.setPatient(patient);
+        prescription.setStatus(PrescriptionStatus.PENDING);
         return prescriptionMapper.toResponse(prescriptionRepository.save(prescription));
     }
 

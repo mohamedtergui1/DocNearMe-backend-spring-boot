@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.medicalrecord.MedicalRecord;
 import ma.tr.docnearme.modules.user.User;
 
@@ -23,10 +24,10 @@ public class Consultation {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id")
-    private User doctor;
+    @JoinColumn(name = "clinic_id")
+    private Clinic clinic;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "medical_record_id")
     private MedicalRecord medicalRecord;
 

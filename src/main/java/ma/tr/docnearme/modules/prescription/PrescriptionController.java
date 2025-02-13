@@ -2,8 +2,10 @@ package ma.tr.docnearme.modules.prescription;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.util.dto.ApiResponse;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -17,7 +19,8 @@ public class PrescriptionController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<PrescriptionResponse>> addPrescription(@RequestBody @Valid PrescriptionRequest prescriptionRequest) {
-        PrescriptionResponse createdPrescription = prescriptionService.createPrescription(prescriptionRequest);
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        PrescriptionResponse createdPrescription = prescriptionService.createPrescription(prescriptionRequest , authUser.getId());
         ApiResponse<PrescriptionResponse> response = ApiResponse.<PrescriptionResponse>builder()
                 .message("Prescription created successfully")
                 .data(createdPrescription)
