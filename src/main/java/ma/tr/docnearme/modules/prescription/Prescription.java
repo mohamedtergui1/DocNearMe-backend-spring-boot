@@ -9,6 +9,7 @@ import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.user.User;
 
 import java.sql.Date;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -30,10 +31,16 @@ public class Prescription {
     @JoinColumn(name = "patient_id")
     private User patient;
 
-    @Temporal(TemporalType.DATE)
-    private Date issueDate;
+    private LocalDateTime issueDate;
 
     @Enumerated(EnumType.STRING)
     private PrescriptionStatus status;
+
+    private LocalDateTime desiredConsultationDate;
+
+    @PrePersist
+    protected void onCreate() {
+        issueDate = LocalDateTime.now();
+    }
 
 }

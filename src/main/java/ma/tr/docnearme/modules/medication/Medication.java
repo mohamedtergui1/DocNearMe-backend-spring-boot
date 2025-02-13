@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import ma.tr.docnearme.modules.consultation.Consultation;
 import ma.tr.docnearme.modules.prescription.Prescription;
 
 import java.util.UUID;
@@ -17,13 +18,13 @@ public class Medication {
     @GeneratedValue
     private UUID id;
 
-    private String name; // "nom" → "name"
+    private String name;
 
-    private String dosage; // Already in English (no change needed)
+    private String dosage;
 
-    private String instructions; // Already in English (no change needed)
+    private String instructions;
 
     @ManyToOne
-    @JoinColumn(name = "prescription_id") // "ordonnance_id" → "prescription_id"
-    private Prescription prescription; // Already in English (no change needed)
+    @JoinColumn(name = "consultation_id")
+    private Consultation consultation;
 }

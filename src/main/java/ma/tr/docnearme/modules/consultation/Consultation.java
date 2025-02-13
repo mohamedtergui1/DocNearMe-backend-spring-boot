@@ -7,9 +7,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.medicalrecord.MedicalRecord;
-import ma.tr.docnearme.modules.user.User;
+import ma.tr.docnearme.modules.medication.Medication;
 
 import java.sql.Date;
+import java.util.List;
 import java.util.UUID;
 
 @NoArgsConstructor
@@ -18,7 +19,6 @@ import java.util.UUID;
 @Setter
 @Entity
 public class Consultation {
-
     @Id
     @GeneratedValue
     private UUID id;
@@ -35,8 +35,11 @@ public class Consultation {
 
     private String reason;
 
-    private Boolean confirmed;
+    private int recoveryDays;
 
-    private Boolean completed;
+    @Column(name = "watermark_path")
+    private String watermarkPath;
 
+    @OneToMany(mappedBy = "consultation")
+    private List<Medication> medications;
 }
