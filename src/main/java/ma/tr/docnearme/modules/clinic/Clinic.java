@@ -28,7 +28,7 @@ public class Clinic {
     private String clinicName;
     private String clinicAddress;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private Category category;
 

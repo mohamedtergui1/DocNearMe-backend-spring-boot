@@ -24,7 +24,7 @@ public class Medication {
 
     private String instructions;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "consultation_id")
     private Consultation consultation;
 }

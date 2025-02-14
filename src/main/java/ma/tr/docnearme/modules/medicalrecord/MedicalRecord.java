@@ -21,7 +21,7 @@ public class MedicalRecord {
     @GeneratedValue
     private UUID id;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
+    @OneToOne(cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
     private User patient;
 

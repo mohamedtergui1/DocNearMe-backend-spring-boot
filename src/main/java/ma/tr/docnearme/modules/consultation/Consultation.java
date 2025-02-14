@@ -23,11 +23,11 @@ public class Consultation {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "clinic_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "clinic_id" )
     private Clinic clinic;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medical_record_id")
     private MedicalRecord medicalRecord;
 
