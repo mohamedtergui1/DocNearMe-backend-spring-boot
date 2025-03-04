@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import ma.tr.docnearme.modules.consultation.Consultation;
-import ma.tr.docnearme.modules.prescription.Prescription;
 
 import java.util.UUID;
 
@@ -20,11 +19,11 @@ public class Medication {
 
     private String name;
 
-    private String dosage;
-
     private String instructions;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "consultation_id")
-    private Consultation consultation;
+    @Column(nullable = false)
+    private String ingredients;
+
+    private String Forbidden;
+
 }

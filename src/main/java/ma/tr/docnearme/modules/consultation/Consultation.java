@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import ma.tr.docnearme.modules.dosageschedule.MedicationDosageSchedule;
 import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.medicalrecord.MedicalRecord;
-import ma.tr.docnearme.modules.medication.Medication;
 
 import java.sql.Date;
 import java.util.List;
@@ -41,5 +41,5 @@ public class Consultation {
     private String watermarkPath;
 
     @OneToMany(mappedBy = "consultation")
-    private List<Medication> medications;
+    private List<MedicationDosageSchedule> MedicationsDosageSchedule;
 }

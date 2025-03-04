@@ -29,7 +29,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private  final UserRepository userRepository;
+    private final UserRepository userRepository;
 
     @Bean
     JwtService jwtService() {
@@ -50,7 +50,7 @@ public class SecurityConfiguration {
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
-        return new AuthenticationManagerImpl(List.of(daoAuthenticationProvider(),jwtAuthenticationProvider()));
+        return new AuthenticationManagerImpl(List.of(daoAuthenticationProvider(), jwtAuthenticationProvider()));
     }
 
     @Bean
@@ -62,9 +62,10 @@ public class SecurityConfiguration {
 
         return authProvider;
     }
+
     @Bean
     AuthenticationProvider jwtAuthenticationProvider() {
-        return  new JwtAuthProvider(jwtService(), userDetailsService());
+        return new JwtAuthProvider(jwtService(), userDetailsService());
     }
 
     @Bean
@@ -93,7 +94,7 @@ public class SecurityConfiguration {
     public CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of("http://localhost:4200", "http://localhost:8080"));
+        configuration.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:4200", "http://localhost:8080"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept"));
         configuration.setAllowCredentials(true);
