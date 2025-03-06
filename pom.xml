@@ -10,7 +10,7 @@
     </parent>
     <groupId>ma.tr</groupId>
     <artifactId>DocNearMe</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>DocNearMe</name>
     <description>DocNearMe</description>
     <url/>
@@ -69,7 +69,7 @@
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>42.7.3</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -147,6 +147,18 @@
                     </excludes>
                 </configuration>
             </plugin>
+           <!--
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <configuration>
+                    <repository>mohamedtergui/docnearme</repository>
+                    <tag>${project.version}</tag>
+                </configuration>
+            </plugin>
+            -->
+
         </plugins>
     </build>
 

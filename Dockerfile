@@ -1,5 +1,5 @@
 # Use a base image with Maven and JDK for building
-FROM maven:3.8-openjdk-17-slim as builder
+FROM maven:3.8-openjdk-17-slim AS builder
 
 # Set the working directory in the container
 WORKDIR /app
@@ -18,7 +18,7 @@ FROM openjdk:17-jdk-slim
 WORKDIR /app
 
 # Copy the JAR file from the build stage
-COPY --from=builder /app/target/DocNearMe-0.0.1-SNAPSHOT.jar /app/app.jar
+COPY --from=builder /app/target/DocNearMe-0.0.1.jar /app/app.jar
 
 # Expose port 8080 to be able to access the application externally
 EXPOSE 8080

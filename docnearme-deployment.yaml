@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: docnearme-deployments
+  labels:
+    app: docnearme
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: docnearme
+  template:
+    metadata:
+      labels:
+        app: docnearme
+    spec:
+      containers:
+        - name: docnearme-deployments
+          image: mohamedtergui/docnearme:0.0.1
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 8080
+              protocol: TCP
+          env:
+            - name: EMAIL_USERNAME
+              value: example@gmail.com
+            - name: EMAIL_PASSWORD
+              value: exampleofpassword
+            - name: url
+              value: jdbc:postgresql://postgres-service:5432/docnearmeDb
+            - name: username
+              value: docnearme
+            - name: password
+              value: password
+            - name: SECRET_KEY
+              value: ZAJBDXUAEBCUILZGBOXUIuidgzyecrzhvcukzerbvcizebclbrygbizbhcrkbclzjgvlczbrybcrczrcvr
+      restartPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: docnearme-service
+spec:
+  selector:
+    app: docnearme
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080
+  type: NodePort
