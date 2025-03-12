@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -15,7 +16,7 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponse> getCategories() {
-        return List.of();
+        return categoryRepository.findAll().stream().map(categoryMapper::categoryToCategoryResponse).collect(Collectors.toList());
     }
 
     @Override

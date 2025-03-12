@@ -44,7 +44,6 @@ public class User implements UserDetails {
 
     private String phoneNumber;
 
-
     @OneToOne(mappedBy = "patient")
     private MedicalRecord medicalRecord;
 

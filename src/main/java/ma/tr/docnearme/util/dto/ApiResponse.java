@@ -12,5 +12,10 @@ import lombok.NoArgsConstructor;
 public class ApiResponse<T> {
     private  String message;
     private  T data;
+    private  PaginationMeta meta;
 
+    public ApiResponse( String message ,T data) {
+        this.data = data;
+        this.message = message;
+    }
 }

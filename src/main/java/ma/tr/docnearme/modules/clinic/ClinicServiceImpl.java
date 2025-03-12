@@ -6,6 +6,8 @@ import ma.tr.docnearme.exception.PermissionException;
 import ma.tr.docnearme.exception.ProcessNotCompletedException;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.modules.user.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +40,7 @@ public class ClinicServiceImpl implements ClinicService {
         User owner = userRepository.findById(clinicOwnerId)
                 .orElseThrow(() -> new NotFoundException("User not found with ID: " + clinicOwnerId));
 
-        Clinic newClinic = clinicMapper.clinicRquestToClinic(clinicRequest);
+        Clinic newClinic = clinicMapper.clinicRequestToClinic(clinicRequest);
         newClinic.setClinicOwner(owner);
 
         Clinic savedClinic = clinicRepository.save(newClinic);
@@ -57,7 +59,7 @@ public class ClinicServiceImpl implements ClinicService {
             throw new PermissionException("User is not authorized to update this clinic");
         }
 
-        Clinic updatedClinic = clinicMapper.clinicRquestToClinic(clinicRequest);
+        Clinic updatedClinic = clinicMapper.clinicRequestToClinic(clinicRequest);
         updatedClinic.setId(id);
         updatedClinic.setClinicOwner(owner);
 
@@ -72,4 +74,19 @@ public class ClinicServiceImpl implements ClinicService {
         }
         clinicRepository.deleteById(id);
     }
+
+    @Override
+    public ClinicResponse findByClinicOwnerId(UUID id) {
+        return clinicMapper.clinicToClinicResponse(clinicRepository.findByClinicOwnerId(id).orElseThrow(()-> new  NotFoundException("you should create  a clinic" )));
+    }
+
+    @Override
+    public Page<ClinicResponse> findAllClinic(Pageable pageable) {
+        return clinicRepository.findAll(pageable)
+                .map(clinicMapper::clinicToClinicResponse);
+    }
+
+
+
+
 }

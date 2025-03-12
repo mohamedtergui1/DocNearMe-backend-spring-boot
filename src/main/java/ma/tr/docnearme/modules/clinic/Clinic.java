@@ -7,10 +7,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ma.tr.docnearme.modules.category.Category;
 import ma.tr.docnearme.modules.consultation.Consultation;
-import ma.tr.docnearme.modules.prescription.Prescription;
+import ma.tr.docnearme.modules.appointment.Appointment;
 import ma.tr.docnearme.modules.user.User;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @AllArgsConstructor
@@ -25,6 +29,7 @@ public class Clinic {
 
     @OneToOne
     private User clinicOwner;
+
     private String clinicName;
     private String clinicAddress;
 
@@ -32,9 +37,33 @@ public class Clinic {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    @OneToMany(mappedBy = "clinic")
-    private List<Prescription> prescriptions;
+    private LocalTime startTime;
+    private LocalTime stopTime;
 
-    @OneToMany(mappedBy = "clinic")
+    // No cascade needed for enums like DayOfWeek
+    @ElementCollection
+    @Enumerated(EnumType.STRING)
+    @CollectionTable(name = "clinic_working_days", joinColumns = @JoinColumn(name = "clinic_id"))
+    private Set<DayOfWeek> workingDays;
+
+    // Cascading PERSIST and MERGE for VacationPeriod entities
+    @ElementCollection
+    @CollectionTable(name = "clinic_vacations", joinColumns = @JoinColumn(name = "clinic_id"))
+    @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
+    private Set<VacationPeriod> vacations;
+
+    @OneToMany(mappedBy = "clinic", cascade = jakarta.persistence.CascadeType.ALL)
+    private List<Appointment> appointments;
+
+    @OneToMany(mappedBy = "clinic", cascade = jakarta.persistence.CascadeType.ALL)
     private List<Consultation> consultations;
+
+
+    public void addWorkingDay(DayOfWeek day) {
+        this.workingDays.add(day);
+    }
+
+    public void addVacationPeriod(VacationPeriod vacationPeriod) {
+        this.vacations.add(vacationPeriod);
+    }
 }

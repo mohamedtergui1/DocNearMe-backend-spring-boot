@@ -9,9 +9,11 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.csrf.InvalidCsrfTokenException;
 import org.springframework.security.web.csrf.MissingCsrfTokenException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -95,6 +97,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleLockedException(LockedException ex) {
         return buildErrorResponse("Account is locked",
                 HttpStatus.UNAUTHORIZED);
+    }
+
+    // Handle 404 Not Found (Route doesn't exist)
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoHandlerFoundException(NoHandlerFoundException ex) {
+        return buildErrorResponse("Resource not found", HttpStatus.NOT_FOUND, null);
+    }
+
+    // Handle 405 Method Not Allowed
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<ErrorResponse> handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException ex) {
+        return buildErrorResponse("Method not allowed", HttpStatus.METHOD_NOT_ALLOWED, null);
     }
 
 

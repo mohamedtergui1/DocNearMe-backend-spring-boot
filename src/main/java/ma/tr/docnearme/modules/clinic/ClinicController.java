@@ -4,11 +4,16 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.util.dto.ApiResponse;
+import ma.tr.docnearme.util.dto.PaginationMeta;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RequestMapping("/api/v1/clinic")
@@ -17,10 +22,28 @@ import java.util.UUID;
 public class ClinicController {
     private final ClinicService clinicService;
 
+    @GetMapping
+    public ApiResponse<List<ClinicResponse>> getClinics(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ClinicResponse> clinicPage = clinicService.findAllClinic(pageable);
+
+        return ApiResponse.<List<ClinicResponse>>builder()
+                .data(clinicPage.getContent())
+                .meta(new PaginationMeta(clinicPage.getNumber(), clinicPage.getTotalPages(), clinicPage.getTotalElements()))  // Pagination info
+                .build();
+    }
+
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @PreAuthorize("hasRole('MEDICINE')")
     public ApiResponse<ClinicResponse> createClinic(@RequestBody @Valid ClinicRequest clinicRequest) {
+
         User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ApiResponse.<ClinicResponse>builder()
                 .data(clinicService.addClinic(clinicRequest, authUser.getId()))
@@ -58,4 +81,16 @@ public class ClinicController {
                 .message("Clinic deleted successfully")
                 .build();
     }
+
+    @GetMapping("/forAuthUser")
+    @PreAuthorize("hasRole('MEDICINE')")
+    public ApiResponse<ClinicResponse> getClinicForAuthUser() {
+        User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        return ApiResponse.<ClinicResponse>builder()
+                .data(clinicService.findByClinicOwnerId(user.getId()))
+                .message(null)
+                .build();
+    }
+
 }

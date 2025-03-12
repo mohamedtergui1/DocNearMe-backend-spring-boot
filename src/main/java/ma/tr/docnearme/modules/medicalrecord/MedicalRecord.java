@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ma.tr.docnearme.modules.prescription.Prescription;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.modules.consultation.Consultation;
 

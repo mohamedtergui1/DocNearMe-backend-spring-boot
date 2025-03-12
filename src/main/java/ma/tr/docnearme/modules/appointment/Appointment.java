@@ -1,6 +1,7 @@
-package ma.tr.docnearme.modules.prescription;
+package ma.tr.docnearme.modules.appointment;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,7 +9,6 @@ import lombok.Setter;
 import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.user.User;
 
-import java.sql.Date;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -17,11 +17,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Prescription {
+public class Appointment {
 
     @Id
     @GeneratedValue
     private UUID id;
+
+
+    private String title;
+
+    private String description;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clinic_id")
@@ -31,12 +37,14 @@ public class Prescription {
     @JoinColumn(name = "patient_id")
     private User patient;
 
-    private LocalDateTime issueDate;
+    private LocalDateTime startDateTime;
+
+    private LocalDateTime endDateTime;
 
     @Enumerated(EnumType.STRING)
-    private PrescriptionStatus status;
+    private AppointmentStatus status;
 
-    private LocalDateTime desiredConsultationDate;
+    private  LocalDateTime  issueDate;
 
     @PrePersist
     protected void onCreate() {
