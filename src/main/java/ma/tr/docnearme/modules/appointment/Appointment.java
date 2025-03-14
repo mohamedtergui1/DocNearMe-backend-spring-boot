@@ -23,11 +23,7 @@ public class Appointment {
     @GeneratedValue
     private UUID id;
 
-
-    private String title;
-
-    private String description;
-
+    private String subject;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "clinic_id")

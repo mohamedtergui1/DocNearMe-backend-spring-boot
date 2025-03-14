@@ -41,8 +41,9 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Void>> updateAppointment(@PathVariable UUID id) {
-        appointmentService.deleteAppointment(id);
+    public ResponseEntity<ApiResponse<Void>> updateAppointment(@PathVariable UUID id, @RequestBody @Valid AppointmentRequest appointmentRequest) {
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        appointmentService.updateAppointment(appointmentRequest,id,authUser.getId());
         ApiResponse<Void> response = ApiResponse.<Void>builder()
                 .message("Appointment updated successfully")
                 .data(null)

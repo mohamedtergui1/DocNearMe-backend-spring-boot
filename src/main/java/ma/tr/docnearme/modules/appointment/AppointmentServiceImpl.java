@@ -41,6 +41,7 @@ public class AppointmentServiceImpl implements AppointmentService {
         newAppointment.setId(id);
         User patient = User.builder().id(patientId).build();
         newAppointment.setPatient(patient);
+        newAppointment.setIssueDate(appointment.getIssueDate());
         return appointmentMapper.toResponse(appointmentRepository.save(newAppointment));
     }
 
