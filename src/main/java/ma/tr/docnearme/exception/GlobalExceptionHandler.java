@@ -113,14 +113,4 @@ public class GlobalExceptionHandler {
 
 
 
-
-//    @ExceptionHandler(Exception.class)
-//    public ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
-//        if (ex instanceof SecurityException) {
-//            return buildErrorResponse("Security error: " + ex.getMessage(),
-//                    HttpStatus.UNAUTHORIZED);
-//        }
-//        return buildErrorResponse("An unexpected error occurred",
-//                HttpStatus.INTERNAL_SERVER_ERROR);
-//    }
 }

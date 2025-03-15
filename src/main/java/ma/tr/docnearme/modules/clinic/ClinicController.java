@@ -51,7 +51,6 @@ public class ClinicController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAnyRole('MEDICINE', 'USER')")
     public ApiResponse<ClinicResponse> getClinic(@PathVariable UUID id) {
         return ApiResponse.<ClinicResponse>builder()
                 .data(clinicService.getClinicById(id))
@@ -83,7 +82,6 @@ public class ClinicController {
     }
 
     @GetMapping("/forAuthUser")
-    @PreAuthorize("hasRole('MEDICINE')")
     public ApiResponse<ClinicResponse> getClinicForAuthUser() {
         User user = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
