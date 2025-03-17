@@ -1,16 +1,20 @@
 package ma.tr.docnearme.modules.appointment;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import ma.tr.docnearme.exception.PermissionException;
 import ma.tr.docnearme.exception.ProcessNotCompletedException;
+import ma.tr.docnearme.modules.clinic.Clinic;
 import ma.tr.docnearme.modules.clinic.ClinicRepository;
+import ma.tr.docnearme.modules.clinic.VacationPeriod;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.modules.user.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -35,8 +39,19 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointment.getStatus() != AppointmentStatus.PENDING) {
             throw new ProcessNotCompletedException("you can't update a valid or rejected appointment");
         }
-        if (!clinicRepository.existsById(appointmentRequest.clinicId())) {
-            throw new ProcessNotCompletedException("clinic does not exist");
+        Clinic clinic = clinicRepository.findById(appointmentRequest.clinicId()).orElseThrow(() -> new ProcessNotCompletedException("clinic does not exist"));
+
+        if (existsOverlappingAppointmentsWithClinicVacations(appointmentRequest.startDateTime(), appointmentRequest.endDateTime(), clinic.getVacations())) {
+            throw new ProcessNotCompletedException("there is already an vacation in this range");
+        }
+        if (appointmentRepository.existsOverlappingAppointmentsExcludingCurrent(
+                appointmentRequest.clinicId(),
+                appointmentRequest.startDateTime(),
+                appointmentRequest.endDateTime(),
+                List.of(AppointmentStatus.PENDING, AppointmentStatus.VALID),
+                id
+        )) {
+            throw new ProcessNotCompletedException("there is already an appointment in this range");
         }
 
         Appointment newAppointment = appointmentMapper.toAppointment(appointmentRequest);
@@ -48,17 +63,43 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public AppointmentResponse createAppointment(AppointmentRequest appointmentRequest, UUID patientId) {
+        if (appointmentRequest.startDateTime().isBefore(LocalDateTime.now())) {
+            throw new ProcessNotCompletedException("you can't create an appointment in the past");
+        }
         if (!userRepository.existsById(patientId)) {
             throw new ProcessNotCompletedException("patient does not exist");
         }
-        if (!clinicRepository.existsById(appointmentRequest.clinicId())) {
-            throw new ProcessNotCompletedException("clinic does not exist");
+        Clinic clinic = clinicRepository.findById(appointmentRequest.clinicId()).orElseThrow(() -> new ProcessNotCompletedException("clinic does not exist"));
+
+        if (existsOverlappingAppointmentsWithClinicVacations(appointmentRequest.startDateTime(), appointmentRequest.endDateTime(), clinic.getVacations())) {
+            throw new ProcessNotCompletedException("there is already an vacation in this range");
+        }
+
+        if (appointmentRepository.existsOverlappingAppointments(
+                appointmentRequest.clinicId(),
+                appointmentRequest.startDateTime(),
+                appointmentRequest.endDateTime(),
+                List.of(AppointmentStatus.PENDING, AppointmentStatus.VALID)
+        )) {
+            throw new ProcessNotCompletedException("there is already an appointment in this range");
         }
         Appointment appointment = appointmentMapper.toAppointment(appointmentRequest);
         User patient = User.builder().id(patientId).build();
         appointment.setPatient(patient);
         appointment.setStatus(AppointmentStatus.PENDING);
         return appointmentMapper.toResponse(appointmentRepository.save(appointment));
+    }
+
+    private boolean existsOverlappingAppointmentsWithClinicVacations(
+            @NotNull LocalDateTime start,
+            @NotNull LocalDateTime end,
+            @NotNull Set<VacationPeriod> vacations
+    ) {
+        return vacations.stream().anyMatch(vacationPeriod -> {
+            LocalDateTime vacationStart = vacationPeriod.getStartDate().atStartOfDay();
+            LocalDateTime vacationEnd = vacationPeriod.getEndDate().atStartOfDay();
+            return start.isBefore(vacationEnd) && end.isAfter(vacationStart);
+        });
     }
 
     @Override
@@ -72,7 +113,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     @Override
     public List<AppointmentResponse> getAppointmentsByClinicIdAfterNowAndByDifferentStatus(UUID clinicId, AppointmentStatus appointmentStatus) {
-        return appointmentRepository.findByClinicClinicOwnerOwnerIdAndIssueDateAfterNowAndStatusNotAsParam(clinicId, LocalDateTime.now(), appointmentStatus)
+        return appointmentRepository.findUpcomingAppointmentsByClinicId(clinicId, LocalDateTime.now(), appointmentStatus)
                 .stream()
                 .map(appointmentMapper::toResponse)
                 .toList();
@@ -84,5 +125,10 @@ public class AppointmentServiceImpl implements AppointmentService {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new ProcessNotCompletedException("Appointment not found"));
         return appointment.getPatient().getId().equals(patientId);
+    }
+
+    @Override
+    public List<AppointmentResponse> getAppointmentByClinicOwnerIdInDateRange(UUID clinicOwnerId, LocalDateTime start, LocalDateTime end) {
+        return appointmentRepository.findAllByClinicClinicOwnerIdInDateRange(clinicOwnerId,start,end).stream().map(appointmentMapper::toResponse).toList();
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -58,6 +59,22 @@ public class AppointmentController {
         List<AppointmentResponse> appointments = appointmentService.getAppointmentsByClinicIdAfterNowAndByDifferentStatus(clinicId, AppointmentStatus.CANCELLED);
         ApiResponse<List<AppointmentResponse>> response = ApiResponse.<List<AppointmentResponse>>builder()
                 .message("Appointments retrieved successfully")
+                .data(appointments)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getAppointmentForAuthUserClinic")
+    public ResponseEntity<ApiResponse<List<AppointmentResponse>>> getAppointmentForAuthUserClinic(@RequestParam(required = false) LocalDate start, @RequestParam(required = false) LocalDate end) {
+        if (start == null) {
+            start = LocalDate.now().minusWeeks(1);
+        }
+        if (end == null) {
+            end = LocalDate.now().plusWeeks(1);
+        }
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<AppointmentResponse> appointments = appointmentService.getAppointmentByClinicOwnerIdInDateRange(authUser.getId(), start.atStartOfDay(), end.atStartOfDay());
+        ApiResponse<List<AppointmentResponse>> response = ApiResponse.<List<AppointmentResponse>>builder()
                 .data(appointments)
                 .build();
         return ResponseEntity.ok(response);
