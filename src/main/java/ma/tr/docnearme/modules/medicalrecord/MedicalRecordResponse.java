@@ -1,4 +1,12 @@
 package ma.tr.docnearme.modules.medicalrecord;
 
-public record MedicalRecordResponse() {
+
+import ma.tr.docnearme.modules.user.UserDtoResponse;
+
+import java.util.UUID;
+
+public record MedicalRecordResponse(
+        UUID id,
+        UserDtoResponse patient
+) {
 }

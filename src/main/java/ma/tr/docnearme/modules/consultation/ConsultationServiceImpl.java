@@ -38,22 +38,22 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     @Transactional
-    public ConsultationResponse createConsultation(ConsultationRequest consultationRequest, UUID appointmentId) {
-        Appointment appointment =  appointmentRepository.findById(appointmentId).orElseThrow(()-> new ProcessNotCompletedException("no appointment found"));
+    public ConsultationResponse createConsultation(ConsultationRequest consultationRequest) {
+        Appointment appointment =  appointmentRepository.findById(consultationRequest.appointmentId()).orElseThrow(()-> new ProcessNotCompletedException("no appointment found"));
         if(appointment.getIsCompleted()){
             throw new ProcessNotCompletedException("appointment already has been completed");
         }
         Consultation newConsultation = consultationMapper.toEntity(consultationRequest);
         newConsultation.setMedicalRecord(appointment.getPatient().getMedicalRecord());
-        List<MedicationDosageSchedule> medicationDosageSchedules = newConsultation.getMedicationDosageSchedules();
-        newConsultation.setMedicationDosageSchedules(new ArrayList<>());
+        List<MedicationDosageSchedule> medicationDosageSchedules = newConsultation.getMedicationsDosageSchedule();
+        newConsultation.setMedicationsDosageSchedule(new ArrayList<>());
         newConsultation = consultationRepository.save(newConsultation);
         Consultation finalNewConsultation = newConsultation;
         medicationDosageSchedules.forEach(medicationDosageSchedule -> {
             medicationDosageSchedule.setConsultation(finalNewConsultation);
         });
         medicationDosageScheduleRepository.saveAll(medicationDosageSchedules);
-        finalNewConsultation.setMedicationDosageSchedules(medicationDosageSchedules);
+        finalNewConsultation.setMedicationsDosageSchedule(medicationDosageSchedules);
         appointment.setCompleted(true);
         appointmentRepository.save(appointment);
         return consultationMapper.toResponse(finalNewConsultation);
@@ -69,6 +69,10 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     public ConsultationResponse getConsultationByAppointmentId(UUID appointmentId) {
-        return null;
+        return consultationMapper.toResponse(consultationRepository.findByAppointmentId(appointmentId).orElseThrow(()->  new NotFoundException("no consultation found")));
+    }
+
+    public boolean checkIfCanCanOpenTheConsultation(UUID AppointmentId, UUID authUserID) {
+        return true;
     }
 }

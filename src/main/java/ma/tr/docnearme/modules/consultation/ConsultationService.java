@@ -6,7 +6,7 @@ import java.util.UUID;
 public interface ConsultationService {
     ConsultationResponse getConsultation(UUID consultationId);
 
-    ConsultationResponse createConsultation(ConsultationRequest consultationRequest, UUID appointmentId);
+    ConsultationResponse createConsultation(ConsultationRequest consultationRequest);
 
     public boolean checkIfCanCreateConsultation(UUID AppointmentId, UUID authUserID);
 

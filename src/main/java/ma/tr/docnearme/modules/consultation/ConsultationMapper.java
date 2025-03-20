@@ -14,9 +14,12 @@ import java.util.stream.Collectors;
 public interface ConsultationMapper {
 
     @Mapping(source = "clinicId", target = "clinic.id")
-    @Mapping(source = "medicationsDosageSchedule", target = "medicationDosageSchedules", qualifiedByName = "mapDosageSchedules")
+    @Mapping(source = "medicationsDosageSchedule", target = "medicationsDosageSchedule", qualifiedByName = "mapDosageSchedules")
+    @Mapping(source = "appointmentId" , target = "appointment.id")
     Consultation toEntity(ConsultationRequest consultationRequest);
 
+    @Mapping(source = "appointment.id", target = "appointmentId")
+    @Mapping(source = "medicationsDosageSchedule", target = "medicationsDosageSchedule")
     ConsultationResponse toResponse(Consultation consultation);
 
     @Named("mapDosageSchedules")

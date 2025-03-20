@@ -18,11 +18,11 @@ public class ConsultationController {
 
     @PostMapping("/{appointmentId}")
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("@consultationServiceImpl.checkIfCanCreateConsultation(#appointmentId, authentication.principal.id)")
+    @PreAuthorize("@consultationServiceImpl.checkIfCanCreateConsultation(#consultationRequest.appointmentId(), authentication.principal.id)")
     public ApiResponse<ConsultationResponse> addConsultation(
             @PathVariable UUID appointmentId,
             @RequestBody @Valid ConsultationRequest consultationRequest) {
-        ConsultationResponse createdConsultation = consultationService.createConsultation(consultationRequest, appointmentId);
+        ConsultationResponse createdConsultation = consultationService.createConsultation(consultationRequest);
         return ApiResponse.<ConsultationResponse>builder()
                 .data(createdConsultation)
                 .message("Consultation created successfully")
@@ -30,13 +30,12 @@ public class ConsultationController {
     }
 
     @GetMapping("/getConsultationByAppointmentId/{appointmentId}")
-    @PreAuthorize("@consultationServiceImpl.checkIfCanCreateConsultation(#appointmentId, authentication.principal.id)")
+    @PreAuthorize("@consultationServiceImpl.checkIfCanCanOpenTheConsultation(#appointmentId, authentication.principal.id)")
     public ApiResponse<ConsultationResponse> getConsultationByAppointmentId(
             @PathVariable UUID appointmentId) {
         ConsultationResponse createdConsultation = consultationService.getConsultationByAppointmentId(appointmentId);
         return ApiResponse.<ConsultationResponse>builder()
                 .data(createdConsultation)
-                .message("Consultation created successfully")
                 .build();
     }
 }

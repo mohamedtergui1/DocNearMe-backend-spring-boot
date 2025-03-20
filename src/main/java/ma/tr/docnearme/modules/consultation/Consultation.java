@@ -44,11 +44,13 @@ public class Consultation {
 
 
     @OneToMany(mappedBy = "consultation", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<MedicationDosageSchedule> medicationDosageSchedules = new ArrayList<>();
+    private List<MedicationDosageSchedule> medicationsDosageSchedule = new ArrayList<>();
 
     private LocalDateTime consultationDate;
 
-
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "appointment_id")
+    private Appointment appointment;
 
     @PrePersist
     public void prePersist(){

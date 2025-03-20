@@ -46,6 +46,9 @@ public class Appointment {
 
     private LocalDateTime issueDate;
 
+    @OneToOne(fetch = FetchType.LAZY,mappedBy = "appointment")
+    private Consultation consultation;
+
     @PrePersist
     protected void onCreate() {
         issueDate = LocalDateTime.now();

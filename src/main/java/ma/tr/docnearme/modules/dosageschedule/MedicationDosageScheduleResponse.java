@@ -1,11 +1,13 @@
 package ma.tr.docnearme.modules.dosageschedule;
 
+import ma.tr.docnearme.modules.medication.MedicationResponse;
+
 import java.util.UUID;
 
 public record MedicationDosageScheduleResponse(
         UUID id,
         int numberOfConsumptionInDay,
-        String medicationId,
+        MedicationResponse medication,
         UUID consultationId,
         Double quantity,
         Unit unit,

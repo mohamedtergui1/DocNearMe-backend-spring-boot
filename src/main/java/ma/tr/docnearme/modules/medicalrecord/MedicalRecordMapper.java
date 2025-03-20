@@ -2,10 +2,10 @@ package ma.tr.docnearme.modules.medicalrecord;
 
 import ma.tr.docnearme.modules.medication.MedicationResponse;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface MedicalRecordMapper {
     MedicalRecord toEntity(MedicalRecordRequest medicalRecordRequest);
-
-    MedicationResponse toResponse(MedicalRecord medicalRecord);
+    MedicalRecordResponse toResponse(MedicalRecord medicalRecord);
 }
