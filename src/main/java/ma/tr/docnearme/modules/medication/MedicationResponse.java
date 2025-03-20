@@ -1,6 +1,9 @@
 package ma.tr.docnearme.modules.medication;
 
-public record MedicationResponse(
+import java.util.List;
 
+public record MedicationResponse(
+        String medicationId, String medicationNameField, double price, String distributor, List<String> principles
 ) {
+
 }

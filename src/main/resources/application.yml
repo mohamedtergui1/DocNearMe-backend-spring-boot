@@ -25,7 +25,11 @@ security:
   jwt:
     secret-key: ${SECRET_KEY}
 
+
+medicationApi: https://www.dwa.ma/api/v1
+
 logging:
   level:
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+

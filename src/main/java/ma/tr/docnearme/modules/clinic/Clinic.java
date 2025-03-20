@@ -40,13 +40,16 @@ public class Clinic {
     private LocalTime startTime;
     private LocalTime stopTime;
 
-    // No cascade needed for enums like DayOfWeek
+    @Column(name = "watermark_path")
+    private String watermarkPath;
+
+
     @ElementCollection
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "clinic_working_days", joinColumns = @JoinColumn(name = "clinic_id"))
     private Set<DayOfWeek> workingDays;
 
-    // Cascading PERSIST and MERGE for VacationPeriod entities
+
     @ElementCollection
     @CollectionTable(name = "clinic_vacations", joinColumns = @JoinColumn(name = "clinic_id"))
     @Cascade({CascadeType.PERSIST, CascadeType.MERGE})
@@ -58,12 +61,4 @@ public class Clinic {
     @OneToMany(mappedBy = "clinic", cascade = jakarta.persistence.CascadeType.ALL)
     private List<Consultation> consultations;
 
-
-    public void addWorkingDay(DayOfWeek day) {
-        this.workingDays.add(day);
-    }
-
-    public void addVacationPeriod(VacationPeriod vacationPeriod) {
-        this.vacations.add(vacationPeriod);
-    }
 }

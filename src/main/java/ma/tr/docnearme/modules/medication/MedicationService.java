@@ -1,16 +1,16 @@
 package ma.tr.docnearme.modules.medication;
 
 import java.util.List;
-import java.util.UUID;
 
 public interface MedicationService {
     MedicationResponse addMedication(MedicationRequest medicationRequest);
 
-    MedicationResponse updateMedication(MedicationRequest medicationRequest, UUID medicationId);
+    MedicationResponse updateMedication(MedicationRequest medicationRequest, String medicationId);
 
     void deleteMedication(MedicationRequest medicationRequest);
 
-    MedicationResponse getMedication(UUID medicationId);
+    MedicationResponse getMedication(String medicationId);
 
     List<MedicationResponse> getAllMedications();
+    List<MedicationResponse> searchMedications(String medicationName);
 }

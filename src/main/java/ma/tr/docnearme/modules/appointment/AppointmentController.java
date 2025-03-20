@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.util.dto.ApiResponse;
+import org.springframework.cglib.core.Local;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -54,6 +56,17 @@ public class AppointmentController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping("/medicine/chnage-appointment-status/{id}")
+    @PreAuthorize("@appointmentServiceImpl.isAppointmentClinicOwner(#id, authentication.principal.id)")
+    public ResponseEntity<ApiResponse<AppointmentResponse>> updateAppointmentFromTheClinicOwner(@PathVariable UUID id, @RequestBody @Valid AppointmentRequest appointmentRequest) {
+        AppointmentResponse updatedAppointment = appointmentService.updateAppointment(appointmentRequest, id);
+        ApiResponse<AppointmentResponse> response = ApiResponse.<AppointmentResponse>builder()
+                .message("Appointment updated successfully")
+                .data(updatedAppointment)
+                .build();
+        return ResponseEntity.ok(response);
+    }
+
     @GetMapping("/getAppointmentsByClinicId/{clinicId}")
     public ResponseEntity<ApiResponse<List<AppointmentResponse>>> getActiveAppointmentsByClinicId(@PathVariable UUID clinicId) {
         List<AppointmentResponse> appointments = appointmentService.getAppointmentsByClinicIdAfterNowAndByDifferentStatus(clinicId, AppointmentStatus.CANCELLED);
@@ -78,5 +91,20 @@ public class AppointmentController {
                 .data(appointments)
                 .build();
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/getAppointmentForAuthUserClinicValidAndofToday")
+    public ApiResponse<List<AppointmentResponse>> getAppointmentForAuthUserClinicValidAndOfToday(){
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<AppointmentResponse> appointmentResponses =  appointmentService.findAllByClinicClinicOwnerIdInDateRangeAndStatus(authUser.getId(),
+                LocalDate.now().atStartOfDay(),
+                LocalDate.now().atStartOfDay().plusDays(1),
+                AppointmentStatus.VALID);
+        return ApiResponse.<List<AppointmentResponse>>builder().data(appointmentResponses).build();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse<AppointmentResponse> getAppointment(@PathVariable UUID id) {
+        return ApiResponse.<AppointmentResponse>builder().data(appointmentService.getAppointment(id)).build();
     }
 }

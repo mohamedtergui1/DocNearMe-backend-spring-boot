@@ -41,7 +41,6 @@ public class ClinicController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @PreAuthorize("hasRole('MEDICINE')")
     public ApiResponse<ClinicResponse> createClinic(@RequestBody @Valid ClinicRequest clinicRequest) {
 
         User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

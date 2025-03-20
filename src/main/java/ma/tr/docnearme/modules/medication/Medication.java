@@ -4,26 +4,33 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import ma.tr.docnearme.modules.consultation.Consultation;
+import lombok.Setter;
 
-import java.util.UUID;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
+@Table(name = "medications") // Explicitly define the table name
 public class Medication {
+
     @Id
-    @GeneratedValue
-    private UUID id;
+    @Column(name = "medication_id") // medicationId is a String and not auto-generated
+    private String medicationId;
 
-    private String name;
-
-    private String instructions;
+    @Column(name = "medication_name", nullable = false)
+    private String medicationNameField;
 
     @Column(nullable = false)
-    private String ingredients;
+    private double price;
 
-    private String Forbidden;
+    @Column(nullable = false)
+    private String distributor;
 
+    @ElementCollection // Required for mapping a collection of basic types
+    @CollectionTable(name = "medication_principles", joinColumns = @JoinColumn(name = "medication_id")) // Define the collection table
+    @Column(name = "principle") // Define the column for the principles
+    private List<String> principles;
 }

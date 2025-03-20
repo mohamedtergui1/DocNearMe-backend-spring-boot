@@ -17,5 +17,9 @@ public interface AppointmentService {
 
     boolean isAppointmentOwner(UUID appointmentId, UUID patientId);
 
+    boolean isAppointmentClinicOwner(UUID appointmentId, UUID medicineId);
+
     List<AppointmentResponse> getAppointmentByClinicOwnerIdInDateRange(UUID clinicOwnerId, LocalDateTime localDateTime, LocalDateTime localDateTime1);
+
+    List<AppointmentResponse> findAllByClinicClinicOwnerIdInDateRangeAndStatus(UUID medicineId ,LocalDateTime start , LocalDateTime end , AppointmentStatus status);
 }

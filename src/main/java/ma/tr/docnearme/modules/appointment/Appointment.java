@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ma.tr.docnearme.modules.clinic.Clinic;
+import ma.tr.docnearme.modules.consultation.Consultation;
 import ma.tr.docnearme.modules.user.User;
 
 import java.time.LocalDateTime;
@@ -37,14 +38,20 @@ public class Appointment {
 
     private LocalDateTime endDateTime;
 
+    @Column(name = "is_completed")
+    private boolean isCompleted;
+
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
 
-    private  LocalDateTime  issueDate;
+    private LocalDateTime issueDate;
 
     @PrePersist
     protected void onCreate() {
         issueDate = LocalDateTime.now();
     }
 
+    public boolean getIsCompleted() {
+        return isCompleted;
+    }
 }

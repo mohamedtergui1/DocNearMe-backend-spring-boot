@@ -128,7 +128,20 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
+    public boolean isAppointmentClinicOwner(UUID appointmentId, UUID medicineId) {
+        Appointment appointment = appointmentRepository.findById(appointmentId)
+                .orElseThrow(() -> new ProcessNotCompletedException("Appointment not found"));
+        return appointment.getClinic().getClinicOwner().getId().equals(medicineId);
+    }
+
+    @Override
     public List<AppointmentResponse> getAppointmentByClinicOwnerIdInDateRange(UUID clinicOwnerId, LocalDateTime start, LocalDateTime end) {
         return appointmentRepository.findAllByClinicClinicOwnerIdInDateRange(clinicOwnerId,start,end).stream().map(appointmentMapper::toResponse).toList();
     }
+
+    @Override
+    public List<AppointmentResponse> findAllByClinicClinicOwnerIdInDateRangeAndStatus(UUID medicineId, LocalDateTime start, LocalDateTime end, AppointmentStatus status) {
+        return appointmentRepository.findAllByClinicClinicOwnerIdInDateRangeAndStatus(medicineId,start,end,status).stream().map(appointmentMapper::toResponse).toList();
+    }
+
 }

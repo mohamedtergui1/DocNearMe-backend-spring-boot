@@ -10,7 +10,8 @@ public record AppointmentResponse(UUID id,
                                   String subject,
                                   AppointmentStatus status,
                                   LocalDateTime startDateTime,
-                                  LocalDateTime endDateTime
+                                  LocalDateTime endDateTime,
+                                  boolean isCompleted
 
 ) {
 

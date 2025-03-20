@@ -55,4 +55,17 @@ public interface AppointmentRepository extends JpaRepository<Appointment, UUID> 
             @Param("clinicOwnerId") UUID clinicOwnerId,
             @Param("startDate") LocalDateTime startDate,
             @Param("endDate") LocalDateTime endDate);
+
+    @Query("SELECT a FROM Appointment a " +
+            "WHERE a.clinic.clinicOwner.id = :clinicOwnerId " +
+            "AND a.startDateTime >= :startDate " +
+            "AND a.endDateTime <= :endDate " +
+            "AND a.status = :status")
+    List<Appointment> findAllByClinicClinicOwnerIdInDateRangeAndStatus(
+            @Param("clinicOwnerId") UUID clinicOwnerId,
+            @Param("startDate") LocalDateTime startDate,
+            @Param("endDate") LocalDateTime endDate,
+            @Param("status") AppointmentStatus status
+    );
+
 }
