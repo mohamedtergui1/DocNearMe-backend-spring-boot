@@ -73,6 +73,8 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
     public boolean checkIfCanCanOpenTheConsultation(UUID AppointmentId, UUID authUserID) {
-        return true;
+        User authUser = userRepository.findById(authUserID).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
+        Appointment appointment = appointmentRepository.findById(AppointmentId).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
+        return authUser.getId().equals(appointment.getClinic().getClinicOwner().getId()) && authUser.getId().equals(appointment.getPatient().getId());
     }
 }

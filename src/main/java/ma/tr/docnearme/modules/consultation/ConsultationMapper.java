@@ -41,7 +41,6 @@ public interface ConsultationMapper {
         dosageSchedule.setUnit(dosageRequest.unit());
         dosageSchedule.setWithFood(dosageRequest.withFood());
 
-        // Map medicationId to Medication entity
         Medication medication = new Medication();
         medication.setMedicationId(dosageRequest.medicationId());
         dosageSchedule.setMedication(medication);
