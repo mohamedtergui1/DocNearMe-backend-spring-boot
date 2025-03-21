@@ -6,6 +6,9 @@ pipeline {
         SONAR_HOST_URL = 'http://localhost:9000'
         // SonarQube token (stored in Jenkins credentials)
         SONAR_AUTH_TOKEN = credentials('sonar-token')
+        // Docker image name and tag
+        DOCKER_IMAGE_NAME = 'docnearme-backend'
+        DOCKER_IMAGE_TAG = 'latest'
     }
 
     tools {
@@ -40,16 +43,25 @@ pipeline {
                 }
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                // Build Docker image
+                script {
+                    docker.build("${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}", ".")
+                }
+            }
+        }
     }
 
     post {
         success {
             // Notify on success
-            echo 'SonarQube analysis completed successfully!'
+            echo 'Pipeline completed successfully!'
         }
         failure {
             // Notify on failure
-            echo 'SonarQube analysis failed!'
+            echo 'Pipeline failed!'
         }
     }
 }
