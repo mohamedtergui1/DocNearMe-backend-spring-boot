@@ -3,6 +3,7 @@ package ma.tr.docnearme.modules.auth;
 import jakarta.mail.MessagingException;
 import lombok.RequiredArgsConstructor;
 
+import lombok.extern.slf4j.Slf4j;
 import ma.tr.docnearme.modules.medicalrecord.MedicalRecord;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.modules.user.UserRole;
@@ -25,6 +26,7 @@ import java.util.Optional;
 import java.util.Random;
 
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -136,7 +138,7 @@ public class AuthServiceImpl implements AuthService {
         try {
             emailService.sendVerificationEmail(user.getEmail(), subject, htmlMessage);
         } catch (MessagingException e) {
-            e.printStackTrace();
+            log.error(e.getMessage());
         }
     }
 

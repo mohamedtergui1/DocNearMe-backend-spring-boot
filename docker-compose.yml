@@ -1,9 +1,8 @@
 version: "3.8"
 
 services:
-
   db:
-    image: postgres:14
+    image: postgres:latest
     container_name: DocNearMe-postgres
     restart: always
     environment:
@@ -14,9 +13,11 @@ services:
       - "5432:5432"
     networks:
       - jenkins_network
+    volumes:
+      - db_data:/var/lib/postgresql/data  # Keep this volume for the DocNearMe database
 
   sonar-postgres:
-    image: postgres:14
+    image: postgres:latest
     container_name: DocNearMe-sonar-postgres
     restart: always
     environment:
@@ -37,8 +38,7 @@ services:
       - "8082:8080"
       - "50000:50000"
     volumes:
-      - jenkins_data:/var/jenkins_home
-      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock  # Keep this bind mount for Docker socket
     networks:
       - jenkins_network
 
@@ -61,4 +61,4 @@ networks:
   jenkins_network:
 
 volumes:
-  jenkins_data:
+  db_data:  # Keep this volume for the DocNearMe database
