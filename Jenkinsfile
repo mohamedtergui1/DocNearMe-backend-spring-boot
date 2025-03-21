@@ -5,6 +5,9 @@ pipeline {
         // Docker image name and tag
         DOCKER_IMAGE_NAME = 'docnearme-backend'
         DOCKER_IMAGE_TAG = 'latest'
+        SONAR_HOST_URL = 'http://sonarqube:9000'
+        // Email recipient
+        EMAIL_RECIPIENT = 'simotergui4@gmail.com'
     }
 
     stages {
@@ -37,34 +40,12 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                // Run SonarQube analysis with proper network configuration
+                // Run SonarQube analysis
                 script {
-                    // First try to determine the correct SonarQube URL
                     sh 'echo "Testing SonarQube connectivity..."'
 
-                    // Try different possible SonarQube URLs
                     sh '''
-                        # Check if SonarQube is available at localhost:9000
-                        if curl -s -f http://localhost:9000 > /dev/null; then
-                            echo "SonarQube available at localhost:9000"
-                            SONAR_HOST_URL="http://localhost:9000"
-                        # Check if SonarQube is available at sonarqube:9000 (common Docker service name)
-                        elif curl -s -f http://sonarqube:9000 > /dev/null; then
-                            echo "SonarQube available at sonarqube:9000"
-                            SONAR_HOST_URL="http://sonarqube:9000"
-                        # Check if SonarQube is available at host.docker.internal:9000 (for Docker Desktop)
-                        elif curl -s -f http://host.docker.internal:9000 > /dev/null; then
-                            echo "SonarQube available at host.docker.internal:9000"
-                            SONAR_HOST_URL="http://host.docker.internal:9000"
-                        else
-                            echo "SonarQube not found - skipping SonarQube analysis"
-                            exit 0
-                        fi
-
-                        # Run SonarQube analysis if we found a working URL
-                        if [ ! -z "$SONAR_HOST_URL" ]; then
-                            mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=sqa_84f46c1ca221ed0ba44a3cfeff33ee2376c61d8b
-                        fi
+                        mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=sqa_84f46c1ca221ed0ba44a3cfeff33ee2376c61d8b
                     '''
                 }
             }
@@ -81,9 +62,36 @@ pipeline {
     post {
         success {
             echo 'Pipeline completed successfully!'
+
+            // Send success email
+            emailext (
+                subject: "SUCCESS: Pipeline '${currentBuild.fullDisplayName}'",
+                body: """
+                <p>The build was successful!</p>
+                <p>Project: ${env.JOB_NAME}</p>
+                <p>Build Number: ${env.BUILD_NUMBER}</p>
+                <p>Build URL: ${env.BUILD_URL}</p>
+                """,
+                to: "${EMAIL_RECIPIENT}",
+                mimeType: 'text/html'
+            )
         }
         failure {
             echo 'Pipeline failed!'
+
+            // Send failure email
+            emailext (
+                subject: "FAILURE: Pipeline '${currentBuild.fullDisplayName}'",
+                body: """
+                <p>The build failed!</p>
+                <p>Project: ${env.JOB_NAME}</p>
+                <p>Build Number: ${env.BUILD_NUMBER}</p>
+                <p>Build URL: ${env.BUILD_URL}</p>
+                <p>Please check the console output for more details.</p>
+                """,
+                to: "${EMAIL_RECIPIENT}",
+                mimeType: 'text/html'
+            )
         }
     }
 }
