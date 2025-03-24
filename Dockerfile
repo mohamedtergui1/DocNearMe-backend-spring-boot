@@ -1,65 +1,27 @@
-pipeline {
-    agent any
+# Use a base image with Maven and JDK for building
+FROM maven:3.8-openjdk-17-slim AS builder
 
-    environment {
-        SONAR_HOST_URL = 'http://localhost:9000'
-        SONAR_AUTH_TOKEN = 'sqa_e03c6ff8dfed6dcacd9169cd409a7ef9363640b0'
-    }
+# Set the working directory in the container
+WORKDIR /app
 
-    stages {
-        stage('Check Tools') {
-            steps {
-                script {
-                    // Check if Maven is installed
-                    def mvnExists = sh(script: 'command -v mvn', returnStatus: true) == 0
-                    if (!mvnExists) {
-                        error 'Maven (mvn) is not installed or not in the PATH!'
-                    }
+# Copy the Maven POM file and the source code to the container
+COPY pom.xml ./pom.xml
+COPY src ./src
 
-                    // Check if Docker is installed
-                    def dockerExists = sh(script: 'command -v docker', returnStatus: true) == 0
-                    if (!dockerExists) {
-                        error 'Docker is not installed or not in the PATH!'
-                    }
+# Run Maven to build the project and create a JAR file
+RUN mvn clean package -DskipTests
 
-                    // Check if Git is installed
-                    def gitExists = sh(script: 'command -v git', returnStatus: true) == 0
-                    if (!gitExists) {
-                        error 'Git is not installed or not in the PATH!'
-                    }
+# Use the official OpenJDK 17 runtime image for running the app
+FROM openjdk:17-jdk-slim
 
-                    echo 'All required tools (Maven, Docker, Git) are installed.'
-                }
-            }
-        }
+# Set the working directory in the container
+WORKDIR /app
 
-        stage('Checkout') {
-            steps {
-                git branch: 'main', url: 'https://github.com/mohamedtergui1/DocNearMe-backend-spring-boot'
-            }
-        }
+# Copy the JAR file from the build stage
+COPY --from=builder /app/target/DocNearMe-0.0.1.jar /app/app.jar
 
-        stage('Build and Test') {
-            steps {
-                sh 'mvn clean package'
-            }
-        }
+# Expose port 8080 to be able to access the application externally
+EXPOSE 8080
 
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh 'mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=$SONAR_AUTH_TOKEN'
-                }
-            }
-        }
-    }
-
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
-        }
-        failure {
-            echo 'Pipeline failed! Check the logs for details.'
-        }
-    }
-}
+# Run the application
+ENTRYPOINT ["java", "-jar", "app.jar"]
