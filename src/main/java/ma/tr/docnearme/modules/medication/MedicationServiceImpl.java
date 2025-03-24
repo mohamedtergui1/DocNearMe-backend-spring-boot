@@ -91,10 +91,10 @@ public class MedicationServiceImpl implements MedicationService {
                     medications.add(medicationResponse);
                 }
 
-                // Synchronize the data with your local database asynchronously
+
                 synchronizeMedicationWithDatabase(medications);
 
-                // Return the list of medications immediately
+
                 return medications;
 
             } else {
@@ -110,11 +110,11 @@ public class MedicationServiceImpl implements MedicationService {
     protected void synchronizeMedicationWithDatabase(List<MedicationResponse> medicationsResponse) {
         for (MedicationResponse medicationResponse : medicationsResponse) {
             try {
-                // Check if the medication already exists in the database
+
                 Optional<Medication> existingMedication = medicationRepository.findById(medicationResponse.medicationId());
 
-                if (!existingMedication.isPresent()) {
-                    // Create a new medication entity
+                if (existingMedication.isEmpty()) {
+
                     Medication newMedication = new Medication();
                     newMedication.setMedicationId(medicationResponse.medicationId());
                     newMedication.setMedicationNameField(medicationResponse.medicationNameField());
@@ -122,7 +122,7 @@ public class MedicationServiceImpl implements MedicationService {
                     newMedication.setDistributor(medicationResponse.distributor());
                     newMedication.setPrinciples(medicationResponse.principles());
 
-                    // Save the new medication to the database
+
                     medicationRepository.save(newMedication);
                 }
             } catch (Exception e) {

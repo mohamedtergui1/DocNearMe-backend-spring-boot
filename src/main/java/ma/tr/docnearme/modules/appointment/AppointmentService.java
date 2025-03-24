@@ -22,4 +22,6 @@ public interface AppointmentService {
     List<AppointmentResponse> getAppointmentByClinicOwnerIdInDateRange(UUID clinicOwnerId, LocalDateTime localDateTime, LocalDateTime localDateTime1);
 
     List<AppointmentResponse> findAllByClinicClinicOwnerIdInDateRangeAndStatus(UUID medicineId ,LocalDateTime start , LocalDateTime end , AppointmentStatus status);
+
+    List<AppointmentResponse> getAppointmentByPatientId(UUID id);
 }

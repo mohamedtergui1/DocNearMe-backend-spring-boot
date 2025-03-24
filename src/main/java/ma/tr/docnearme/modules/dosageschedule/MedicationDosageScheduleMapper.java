@@ -7,4 +7,7 @@ import org.mapstruct.Mapping;
 public interface MedicationDosageScheduleMapper {
     @Mapping(source = "medicationId" , target = "medication.medicationId")
     MedicationDosageSchedule toEntity(MedicationDosageScheduleRequest medicationDosageScheduleRequest);
+
+    @Mapping( source = "consultation.id" , target = "consultationId" )
+    MedicationDosageScheduleResponse toResponse(MedicationDosageSchedule medicationDosageSchedule);
 }

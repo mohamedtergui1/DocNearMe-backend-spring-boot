@@ -14,6 +14,8 @@ import ma.tr.docnearme.modules.medicalrecord.MedicalRecordRepository;
 import ma.tr.docnearme.modules.user.UserRepository;
 import ma.tr.docnearme.util.email.EmailService;
 import ma.tr.docnearme.security.jwt.JwtService;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +26,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.Executor;
 
 
 @Slf4j
@@ -40,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
     private final MedicalRecordRepository medicalRecordRepository;
 
 
+
     public UserDtoResponse signup(RegisterRequest input) {
         User user = authMapper.toEntity(input);
         if (user.getRole() == UserRole.ADMIN) {
@@ -52,9 +56,9 @@ public class AuthServiceImpl implements AuthService {
         user.setVerificationCode(generateVerificationCode());
         user.setVerificationCodeExpiresAt(LocalDateTime.now().plusMinutes(15));
         user.setEnabled(false);
-        sendVerificationEmail(user);
         user = userRepository.save(user);
         medicalRecordRepository.save(new MedicalRecord(null, user, new ArrayList<>()));
+        sendVerificationEmail(user);
         return authMapper.toDto(user);
     }
 
@@ -119,13 +123,14 @@ public class AuthServiceImpl implements AuthService {
         return authMapper.toDto(user);
     }
 
-    private void sendVerificationEmail(User user) {
+    @Async("taskExecutor")
+    protected void sendVerificationEmail(User user) {
         String subject = "Account Verification";
         String verificationCode = "VERIFICATION CODE " + user.getVerificationCode();
         String htmlMessage = "<html>"
                 + "<body style=\"font-family: Arial, sans-serif;\">"
                 + "<div style=\"background-color: #f5f5f5; padding: 20px;\">"
-                + "<h2 style=\"color: #333;\">Welcome to our eBankify!</h2>"
+                + "<h2 style=\"color: #333;\">Welcome to our DocNearMe!</h2>"
                 + "<p style=\"font-size: 16px;\">Please enter the verification code below to continue:</p>"
                 + "<div style=\"background-color: #fff; padding: 20px; border-radius: 5px; box-shadow: 0 0 10px rgba(0,0,0,0.1);\">"
                 + "<h3 style=\"color: #333;\">Verification Code:</h3>"

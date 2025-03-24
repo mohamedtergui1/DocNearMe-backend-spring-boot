@@ -12,6 +12,8 @@ import ma.tr.docnearme.modules.dosageschedule.MedicationDosageSchedule;
 import ma.tr.docnearme.modules.dosageschedule.MedicationDosageScheduleRepository;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.modules.user.UserRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -72,9 +74,14 @@ public class ConsultationServiceImpl implements ConsultationService {
         return consultationMapper.toResponse(consultationRepository.findByAppointmentId(appointmentId).orElseThrow(()->  new NotFoundException("no consultation found")));
     }
 
+    @Override
+    public Page<ConsultationResponse> getConsultationsByMedicineId(Pageable pageable , UUID medicineId) {
+        return consultationRepository.findByClinicClinicOwnerId(medicineId,pageable).map(consultationMapper::toResponse);
+    }
+
     public boolean checkIfCanCanOpenTheConsultation(UUID AppointmentId, UUID authUserID) {
+        Appointment appointment = appointmentRepository.findById(AppointmentId).orElseThrow(() -> new NotFoundException("the consultation not found"));
         User authUser = userRepository.findById(authUserID).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
-        Appointment appointment = appointmentRepository.findById(AppointmentId).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
-        return authUser.getId().equals(appointment.getClinic().getClinicOwner().getId()) && authUser.getId().equals(appointment.getPatient().getId());
+        return authUser.getId().equals(appointment.getClinic().getClinicOwner().getId()) || authUser.getId().equals(appointment.getPatient().getId());
     }
 }

@@ -1,6 +1,8 @@
 package ma.tr.docnearme.modules.consultation;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 import java.util.UUID;
 
 public interface ConsultationService {
@@ -11,4 +13,6 @@ public interface ConsultationService {
     public boolean checkIfCanCreateConsultation(UUID AppointmentId, UUID authUserID);
 
     ConsultationResponse getConsultationByAppointmentId(UUID appointmentId);
+
+    Page<ConsultationResponse> getConsultationsByMedicineId(Pageable pageable , UUID medicineId);
 }

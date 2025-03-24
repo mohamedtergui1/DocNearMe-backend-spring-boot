@@ -144,4 +144,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         return appointmentRepository.findAllByClinicClinicOwnerIdInDateRangeAndStatus(medicineId,start,end,status).stream().map(appointmentMapper::toResponse).toList();
     }
 
+    @Override
+    public List<AppointmentResponse> getAppointmentByPatientId(UUID id) {
+        return appointmentRepository.findByPatientId(id).stream().map(appointmentMapper::toResponse).toList();
+    }
+
 }

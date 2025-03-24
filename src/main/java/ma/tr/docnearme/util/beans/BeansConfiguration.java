@@ -2,16 +2,18 @@ package ma.tr.docnearme.util.beans;
 
 import okhttp3.OkHttpClient;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 import java.util.concurrent.Executor;
 
-@org.springframework.context.annotation.Configuration
-public class Configuration {
+@Configuration
+public class BeansConfiguration {
     @Bean
     public OkHttpClient okHttpClient() {
         return new OkHttpClient();
     }
+
     @Bean(name = "taskExecutor")
     public Executor taskExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();

@@ -107,4 +107,26 @@ public class AppointmentController {
     public ApiResponse<AppointmentResponse> getAppointment(@PathVariable UUID id) {
         return ApiResponse.<AppointmentResponse>builder().data(appointmentService.getAppointment(id)).build();
     }
+
+
+    @GetMapping("/getAppointmentForAuthPatient")
+    public ResponseEntity<ApiResponse<List<AppointmentResponse>>> getAppointmentForAuthPatient() {
+
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+
+
+
+
+        List<AppointmentResponse> appointmentsResponse = appointmentService.getAppointmentByPatientId(authUser.getId());
+
+        // Build the API response
+        ApiResponse<List<AppointmentResponse>> response = ApiResponse.<List<AppointmentResponse>>builder()
+                .data(appointmentsResponse)
+                .message("Appointments fetched successfully")
+                .build();
+
+        // Return the response wrapped in a ResponseEntity
+        return ResponseEntity.ok(response);
+    }
 }
