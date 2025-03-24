@@ -49,20 +49,21 @@ public class ClinicServiceImpl implements ClinicService {
 
     @Override
     public ClinicResponse updateClinic(ClinicRequest clinicRequest, UUID id, UUID clinicOwnerId) {
+        // 1. Fetch the existing clinic (throws NotFoundException if not found)
         Clinic existingClinic = clinicRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Clinic not found with ID: " + id));
 
-        User owner = userRepository.findById(clinicOwnerId)
-                .orElseThrow(() -> new NotFoundException("User not found with ID: " + clinicOwnerId));
-
+        // 2. Verify the requesting user is the clinic owner (throws PermissionException if not)
         if (!existingClinic.getClinicOwner().getId().equals(clinicOwnerId)) {
             throw new PermissionException("User is not authorized to update this clinic");
         }
 
+        // 3. Update only the allowed fields (avoid overwriting owner or ID)
         Clinic updatedClinic = clinicMapper.clinicRequestToClinic(clinicRequest);
-        updatedClinic.setId(id);
-        updatedClinic.setClinicOwner(owner);
+        updatedClinic.setId(id); // Ensure the same ID is retained
+        updatedClinic.setClinicOwner(existingClinic.getClinicOwner()); // Keep the original owner
 
+        // 4. Save and return the updated clinic
         Clinic savedClinic = clinicRepository.save(updatedClinic);
         return clinicMapper.clinicToClinicResponse(savedClinic);
     }

@@ -58,7 +58,7 @@ public class ClinicController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('MEDICINE')")
+    //PreAuthorize("authentication.principal.clinic != null && id== authentication.principal.clinic.id")
     public ApiResponse<ClinicResponse> updateClinic(
             @PathVariable UUID id,
             @RequestBody @Valid ClinicRequest clinicRequest

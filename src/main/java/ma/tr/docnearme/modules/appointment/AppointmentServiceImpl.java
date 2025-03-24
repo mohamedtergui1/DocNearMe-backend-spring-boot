@@ -39,6 +39,9 @@ public class AppointmentServiceImpl implements AppointmentService {
         if (appointment.getStatus() != AppointmentStatus.PENDING) {
             throw new ProcessNotCompletedException("you can't update a valid or rejected appointment");
         }
+        if (appointmentRequest.startDateTime().isBefore(LocalDateTime.now())) {
+            throw new ProcessNotCompletedException("you can't update an appointment to be in the past");
+        }
         Clinic clinic = clinicRepository.findById(appointmentRequest.clinicId()).orElseThrow(() -> new ProcessNotCompletedException("clinic does not exist"));
 
         if (existsOverlappingAppointmentsWithClinicVacations(appointmentRequest.startDateTime(), appointmentRequest.endDateTime(), clinic.getVacations())) {
