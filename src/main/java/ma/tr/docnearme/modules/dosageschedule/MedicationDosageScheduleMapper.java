@@ -9,5 +9,6 @@ public interface MedicationDosageScheduleMapper {
     MedicationDosageSchedule toEntity(MedicationDosageScheduleRequest medicationDosageScheduleRequest);
 
     @Mapping( source = "consultation.id" , target = "consultationId" )
+    @Mapping(source = "consultation.consultationDate",target = "consultationDate")
     MedicationDosageScheduleResponse toResponse(MedicationDosageSchedule medicationDosageSchedule);
 }

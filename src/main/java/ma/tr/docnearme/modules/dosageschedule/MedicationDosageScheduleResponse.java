@@ -3,6 +3,7 @@ package ma.tr.docnearme.modules.dosageschedule;
 import ma.tr.docnearme.modules.medication.MedicationResponse;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record MedicationDosageScheduleResponse(
@@ -14,6 +15,7 @@ public record MedicationDosageScheduleResponse(
         Unit unit,
         boolean withFood,
         String specialInstructions,
-        LocalDate dateWhenMustStopConsumption
+        LocalDate dateWhenMustStopConsumption,
+        LocalDateTime consultationDate
 ) {
 }
