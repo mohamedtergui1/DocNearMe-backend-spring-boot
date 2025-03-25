@@ -8,7 +8,7 @@ pipeline {
         SONAR_HOST_URL = 'http://sonarqube:9000'
         // Email recipient
         EMAIL_RECIPIENT = 'simotergui4@gmail.com'
-        DOCKER_HUB_CREDENTIALS = credentials('eec1d675-b917-45c9-a44b-075e09ade0f9')
+        DOCKER_HUB_CREDENTIALS = credentials('24e0f419-e756-4410-b24e-b74f127c9645')
         // Full Docker Hub image name (replace 'your-dockerhub-username' with your actual username)
         DOCKER_HUB_IMAGE = "mohamedtergui/${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}"
     }
@@ -42,7 +42,7 @@ pipeline {
                 script {
                     sh 'echo "Testing SonarQube connectivity..."'
                     sh '''
-                        mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=sqa_84f46c1ca221ed0ba44a3cfeff33ee2376c61d8b
+                        mvn sonar:sonar -Dsonar.host.url=$SONAR_HOST_URL -Dsonar.login=sqa_e5356e2382b91f71bd3edc91f29627e60120be5a
                     '''
                 }
             }
@@ -59,23 +59,23 @@ pipeline {
         }
 
         stage('Docker Push') {
-    steps {
-        script {
-            // Secure way to handle credentials
-            withCredentials([usernamePassword(
-                credentialsId: 'eec1d675-b917-45c9-a44b-075e09ade0f9',
-                passwordVariable: 'DOCKER_HUB_PASSWORD',
-                usernameVariable: 'DOCKER_HUB_USERNAME'
-            )]) {
-                sh '''
-                    echo "$DOCKER_HUB_PASSWORD" | docker login -u "$DOCKER_HUB_USERNAME" --password-stdin
-                    docker push mohamedtergui/docnearme-backend:latest
-                    docker logout
-                '''
+            steps {
+                script {
+                    // Cleaner credential handling
+                    withCredentials([usernamePassword(
+                        credentialsId: '24e0f419-e756-4410-b24e-b74f127c9645',
+                        passwordVariable: 'DOCKER_PASSWORD',
+                        usernameVariable: 'DOCKER_USERNAME'
+                    )]) {
+                        sh """
+                            docker login -u ${DOCKER_USERNAME} -p ${DOCKER_PASSWORD}
+                            docker push ${DOCKER_HUB_IMAGE}
+                            docker logout
+                        """
+                    }
+                }
             }
         }
-    }
-}
     }
 
     post {

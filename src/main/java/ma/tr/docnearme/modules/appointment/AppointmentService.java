@@ -15,9 +15,7 @@ public interface AppointmentService {
 
     List<AppointmentResponse> getAppointmentsByClinicIdAfterNowAndByDifferentStatus(UUID clinicId, AppointmentStatus status);
 
-    boolean isAppointmentOwner(UUID appointmentId, UUID patientId);
 
-    boolean isAppointmentClinicOwner(UUID appointmentId, UUID medicineId);
 
     List<AppointmentResponse> getAppointmentByClinicOwnerIdInDateRange(UUID clinicOwnerId, LocalDateTime localDateTime, LocalDateTime localDateTime1);
 

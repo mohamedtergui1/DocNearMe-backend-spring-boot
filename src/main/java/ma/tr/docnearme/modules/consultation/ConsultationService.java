@@ -10,7 +10,6 @@ public interface ConsultationService {
 
     ConsultationResponse createConsultation(ConsultationRequest consultationRequest);
 
-    public boolean checkIfCanCreateConsultation(UUID AppointmentId, UUID authUserID);
 
     ConsultationResponse getConsultationByAppointmentId(UUID appointmentId);
 

@@ -35,7 +35,7 @@ public class AppointmentController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("@appointmentServiceImpl.isAppointmentOwner(#id, authentication.principal.id)")
+    @PreAuthorize("@securityService.isAppointmentOwner(#id, authentication.principal.id)")
     public ResponseEntity<ApiResponse<Void>> deleteAppointment(@PathVariable UUID id) {
         appointmentService.deleteAppointment(id);
         ApiResponse<Void> response = ApiResponse.<Void>builder()
@@ -46,7 +46,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("@appointmentServiceImpl.isAppointmentOwner(#id, authentication.principal.id)")
+    @PreAuthorize("@securityService.isAppointmentOwner(#id, authentication.principal.id)")
     public ResponseEntity<ApiResponse<AppointmentResponse>> updateAppointment(@PathVariable UUID id, @RequestBody @Valid AppointmentRequest appointmentRequest) {
         AppointmentResponse updatedAppointment = appointmentService.updateAppointment(appointmentRequest, id);
         ApiResponse<AppointmentResponse> response = ApiResponse.<AppointmentResponse>builder()
@@ -57,7 +57,7 @@ public class AppointmentController {
     }
 
     @PutMapping("/medicine/chnage-appointment-status/{id}")
-    @PreAuthorize("@appointmentServiceImpl.isAppointmentClinicOwner(#id, authentication.principal.id)")
+    @PreAuthorize("@securityService.isAppointmentClinicOwner(#id, authentication.principal.id)")
     public ResponseEntity<ApiResponse<AppointmentResponse>> updateAppointmentFromTheClinicOwner(@PathVariable UUID id, @RequestBody @Valid AppointmentRequest appointmentRequest) {
         AppointmentResponse updatedAppointment = appointmentService.updateAppointment(appointmentRequest, id);
         ApiResponse<AppointmentResponse> response = ApiResponse.<AppointmentResponse>builder()

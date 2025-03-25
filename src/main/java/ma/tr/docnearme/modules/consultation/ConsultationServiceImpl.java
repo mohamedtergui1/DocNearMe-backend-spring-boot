@@ -62,12 +62,7 @@ public class ConsultationServiceImpl implements ConsultationService {
     }
 
 
-    public boolean checkIfCanCreateConsultation(UUID AppointmentId, UUID authUserID) {
-        log.info("checkIfCanCreateConsultation");
-        User authUser = userRepository.findById(authUserID).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
-        Appointment appointment = appointmentRepository.findById(AppointmentId).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
-        return appointment.getStatus() == AppointmentStatus.VALID && authUser.getClinic().getId().equals(appointment.getClinic().getId());
-    }
+
 
     @Override
     public ConsultationResponse getConsultationByAppointmentId(UUID appointmentId) {
@@ -79,9 +74,5 @@ public class ConsultationServiceImpl implements ConsultationService {
         return consultationRepository.findByClinicClinicOwnerId(medicineId,pageable).map(consultationMapper::toResponse);
     }
 
-    public boolean checkIfCanCanOpenTheConsultation(UUID AppointmentId, UUID authUserID) {
-        Appointment appointment = appointmentRepository.findById(AppointmentId).orElseThrow(() -> new NotFoundException("the consultation not found"));
-        User authUser = userRepository.findById(authUserID).orElseThrow(() -> new AccessDeniedException("you can't access to this route"));
-        return authUser.getId().equals(appointment.getClinic().getClinicOwner().getId()) || authUser.getId().equals(appointment.getPatient().getId());
-    }
+
 }
