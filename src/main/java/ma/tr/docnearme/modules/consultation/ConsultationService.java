@@ -14,4 +14,8 @@ public interface ConsultationService {
     ConsultationResponse getConsultationByAppointmentId(UUID appointmentId);
 
     Page<ConsultationResponse> getConsultationsByMedicineId(Pageable pageable , UUID medicineId);
+
+    Page<ConsultationResponse> getConsultationsByPatientId(Pageable pageable, UUID patientId);
+
+    Page<ConsultationResponse> getConsultationsByPatientAppointmentId(Pageable pageable, UUID appointmentID);
 }

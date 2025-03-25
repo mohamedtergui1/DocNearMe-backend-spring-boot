@@ -28,7 +28,6 @@ import java.util.UUID;
 public class ConsultationServiceImpl implements ConsultationService {
 
     private final ConsultationRepository consultationRepository;
-    private final UserRepository userRepository;
     private final ConsultationMapper consultationMapper;
     private final AppointmentRepository appointmentRepository;
     private final MedicationDosageScheduleRepository  medicationDosageScheduleRepository;
@@ -72,6 +71,17 @@ public class ConsultationServiceImpl implements ConsultationService {
     @Override
     public Page<ConsultationResponse> getConsultationsByMedicineId(Pageable pageable , UUID medicineId) {
         return consultationRepository.findByClinicClinicOwnerId(medicineId,pageable).map(consultationMapper::toResponse);
+    }
+
+    @Override
+    public Page<ConsultationResponse> getConsultationsByPatientId(Pageable pageable, UUID patientId) {
+        return consultationRepository.findByMedicalRecordPatientId(patientId,pageable).map(consultationMapper::toResponse);
+    }
+
+    @Override
+    public Page<ConsultationResponse> getConsultationsByPatientAppointmentId(Pageable pageable, UUID appointmentID) {
+        return consultationRepository.findByAppointmentId(appointmentID,pageable).map(consultationMapper::toResponse);
+
     }
 
 

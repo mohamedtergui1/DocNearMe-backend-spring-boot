@@ -2,6 +2,7 @@ package ma.tr.docnearme.modules.consultation;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
+import jakarta.websocket.server.PathParam;
 import lombok.RequiredArgsConstructor;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.util.dto.ApiResponse;
@@ -53,6 +54,33 @@ public class ConsultationController {
         Pageable pageable = PageRequest.of(page, size);
 
         Page<ConsultationResponse> consultations = consultationService.getConsultationsByMedicineId(pageable,authUser.getId());
+
+        return ApiResponse.<List<ConsultationResponse>>builder().data(consultations.getContent()).build();
+    }
+
+
+    @GetMapping("/getConsultationsForAuthPatient")
+    public ApiResponse<List<ConsultationResponse>> getConsultationsForAuthPatient(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10")  int size
+    ) {
+        User authUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ConsultationResponse> consultations = consultationService.getConsultationsByPatientId(pageable,authUser.getId());
+
+        return ApiResponse.<List<ConsultationResponse>>builder().data(consultations.getContent()).build();
+    }
+
+    @GetMapping("/getConsultationsByPatientAppointmentId/{appointmentId}")
+    public ApiResponse<List<ConsultationResponse>> getConsultationsByPatientAppointmentId(
+            @RequestParam(name = "page", defaultValue = "0") int page,
+            @RequestParam(name = "size", defaultValue = "10")  int size,
+            @PathVariable UUID appointmentId
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ConsultationResponse> consultations = consultationService.getConsultationsByPatientAppointmentId(pageable,appointmentId);
 
         return ApiResponse.<List<ConsultationResponse>>builder().data(consultations.getContent()).build();
     }
