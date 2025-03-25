@@ -17,6 +17,14 @@ FROM openjdk:17-jdk-slim
 # Set the working directory in the container
 WORKDIR /app
 
+# Set default environment variables
+ENV EMAIL_USERNAME=default@example.com \
+    EMAIL_PASSWORD=defaultpassword \
+    SECRET_KEY=defaultsecretkey \
+    SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/docnearme \
+    SPRING_DATASOURCE_USERNAME=postgres \
+    SPRING_DATASOURCE_PASSWORD=postgres
+
 # Copy the JAR file from the build stage
 COPY --from=builder /app/target/DocNearMe-0.0.1.jar /app/app.jar
 
