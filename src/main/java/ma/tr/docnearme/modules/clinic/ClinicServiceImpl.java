@@ -87,7 +87,12 @@ public class ClinicServiceImpl implements ClinicService {
                 .map(clinicMapper::clinicToClinicResponse);
     }
 
-
+    @Override
+    public Page<ClinicResponse> searchByNameAndFilterByCategoryId(String query, UUID categoryId, Pageable pageable) {
+        query ="%"+ query +"%";
+        return categoryId != null ? clinicRepository.findAllWhereNameContainsAndCAndCategoryId(query,categoryId,pageable).map(clinicMapper::clinicToClinicResponse)
+                : clinicRepository.findAllWhereNameContains(query,pageable).map(clinicMapper::clinicToClinicResponse);
+    }
 
 
 }

@@ -12,4 +12,6 @@ public interface ClinicService {
     void deleteClinic(UUID id);
     ClinicResponse findByClinicOwnerId(UUID id);
     Page<ClinicResponse> findAllClinic(Pageable pageable);
+
+    Page<ClinicResponse> searchByNameAndFilterByCategoryId(String query, UUID categoryId, Pageable pageable);
 }

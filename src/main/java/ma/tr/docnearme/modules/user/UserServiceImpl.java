@@ -36,12 +36,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDtoResponse updateUser(UUID id, UserDtoRequest userDtoRequest) {
-        if (!userRepository.existsById(id)) {
-            throw new ProcessNotCompletedException("User with id " + id + " not found");
-        }
+        User oldData = userRepository.findById(id).orElseThrow(() -> new ProcessNotCompletedException("User with id " + id + " not found"));
         User editUser = authMapper.toEntity(userDtoRequest);
         editUser.setId(id);
+        editUser.setPassword(oldData.getPassword());
+        editUser.setEnabled(oldData.isEnabled());
+        editUser.setVerificationCode(oldData.getVerificationCode());
+        editUser.setMedicalRecord(oldData.getMedicalRecord());
+        editUser.setRole(oldData.getRole());
         editUser = userRepository.save(editUser);
+
         return authMapper.toDto(editUser);
     }
 

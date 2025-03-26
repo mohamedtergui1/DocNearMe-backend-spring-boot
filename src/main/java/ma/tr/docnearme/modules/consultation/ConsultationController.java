@@ -84,4 +84,6 @@ public class ConsultationController {
 
         return ApiResponse.<List<ConsultationResponse>>builder().data(consultations.getContent()).build();
     }
+
+
 }

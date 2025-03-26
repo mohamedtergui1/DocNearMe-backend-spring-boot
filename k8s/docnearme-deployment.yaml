@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: docnearme-deployments
-          image: mohamedtergui/docnearme:0.0.1
+          image: mohamedtergui/docnearme-backend:latest
           imagePullPolicy: Always
           ports:
             - containerPort: 8080

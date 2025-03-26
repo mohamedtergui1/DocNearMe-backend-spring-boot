@@ -2,6 +2,7 @@ package ma.tr.docnearme.modules.clinic;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import ma.tr.docnearme.modules.consultation.ConsultationResponse;
 import ma.tr.docnearme.modules.user.User;
 import ma.tr.docnearme.util.dto.ApiResponse;
 import ma.tr.docnearme.util.dto.PaginationMeta;
@@ -32,6 +33,23 @@ public class ClinicController {
 
         Page<ClinicResponse> clinicPage = clinicService.findAllClinic(pageable);
 
+        return ApiResponse.<List<ClinicResponse>>builder()
+                .data(clinicPage.getContent())
+                .meta(new PaginationMeta(clinicPage.getNumber(), clinicPage.getTotalPages(), clinicPage.getTotalElements()))  // Pagination info
+                .build();
+    }
+
+    @GetMapping("/searchByNameAndFilterByCategoryId")
+    public ApiResponse<List<ClinicResponse>> searchByNameAndFilterByCategoryId(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "query", defaultValue = "") String query,
+            @RequestParam(value = "category_id" , required = false  ) UUID category_id
+    ){
+
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<ClinicResponse> clinicPage = clinicService.searchByNameAndFilterByCategoryId(query,category_id,pageable);
         return ApiResponse.<List<ClinicResponse>>builder()
                 .data(clinicPage.getContent())
                 .meta(new PaginationMeta(clinicPage.getNumber(), clinicPage.getTotalPages(), clinicPage.getTotalElements()))  // Pagination info
