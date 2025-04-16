@@ -23,7 +23,7 @@ public class MedicationServiceImpl implements MedicationService {
     private final MedicationRepository medicationRepository;
     private final OkHttpClient client;
 
-    @Value("${medicationApi}")
+    @Value("${api.medication.base-url}")
     private String medicationApiUrl;
 
     @Override
