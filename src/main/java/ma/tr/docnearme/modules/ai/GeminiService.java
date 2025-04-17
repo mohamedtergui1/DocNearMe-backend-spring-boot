@@ -1,5 +1,6 @@
 package ma.tr.docnearme.modules.ai;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
 
+@Slf4j
 @Service
 public class GeminiService {
 
@@ -71,7 +73,7 @@ public class GeminiService {
 
     public String chat(String messages) throws IOException {
         String url = String.format("%s/%s:generateContent?key=%s", baseUrl, model, apiKey);
-
+        log.info(url);
         JSONObject requestBody = new JSONObject();
         JSONArray contents = new JSONArray();
 
@@ -121,7 +123,7 @@ public class GeminiService {
         }
 
         JSONArray candidates = jsonResponse.getJSONArray("candidates");
-        if (candidates.length() == 0) {
+        if (candidates.isEmpty()) {
             throw new RuntimeException("Empty candidates array");
         }
 
@@ -129,7 +131,7 @@ public class GeminiService {
         JSONObject content = firstCandidate.getJSONObject("content");
         JSONArray parts = content.getJSONArray("parts");
 
-        if (parts.length() == 0) {
+        if (parts.isEmpty()) {
             throw new RuntimeException("No parts in response");
         }
 

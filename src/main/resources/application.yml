@@ -2,7 +2,7 @@ spring:
   application:
     name: DocNearMe
 
-  # Mail Configuration (for sending emails)
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -30,7 +30,7 @@ spring:
       idle-timeout: 600000
       max-lifetime: 1800000
 
-  # JPA/Hibernate Configuration
+
   jpa:
     hibernate:
       ddl-auto: update
@@ -43,13 +43,13 @@ spring:
         jdbc.time_zone: UTC
         connection.provider_disables_autocommit: true
 
-# Security Configuration
+
 security:
   jwt:
     secret-key: ${JWT_SECRET:defaultSecretKeyForDevelopmentOnly}
-    expiration-time: 86400000 # 24 hours in milliseconds
+    expiration-time: 86400000
 
-# External APIs Configuration
+
 api:
   medication:
     base-url: https://www.dwa.ma/api/v1
@@ -57,11 +57,11 @@ api:
 
   gemini:
     base-url: ${LLM_API:https://generativelanguage.googleapis.com/v1beta/models}
-    model: gemini-pro
+    model: gemini-2.0-flash
     key: ${LLM_KEY}
     timeout: 10000
 
-# Logging Configuration
+
 logging:
   level:
     root: INFO
